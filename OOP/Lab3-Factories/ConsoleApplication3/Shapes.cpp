@@ -20,14 +20,16 @@ void printInfo(Shape* s, Shape* h) {
 	else {
 		difString = " is equal size to ";
 	}
+	string stype = s->getType();
+	string htype = h->getType();
 	cout <<
 		s->getInfo() << endl <<
 		h->getInfo() << endl <<
 		std::boolalpha <<
-		s->getType() << difString << h->getType() << endl <<
-		s->getType() << " intersects " << h->getType() << ": " << Shape::intersects(s, h) << endl <<
-		s->getType() << " contains " << h->getType() << ": " << Shape::contains(s, h) << endl <<
-		s->getType() << " contains " << h->getType() << ": " << Shape::contains(h, s) << endl << endl;
+		stype << difString << htype << endl <<
+		stype << " intersects " << htype << ": " << Shape::intersects(s, h) << endl <<
+		stype << " contains " << htype << ": " << Shape::contains(s, h) << endl <<
+		stype << " contains " << htype << ": " << Shape::contains(h, s) << endl << endl;
 }
 
 int main() {
