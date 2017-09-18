@@ -33,7 +33,9 @@ private:
 	void addAsRoot(int);
 	void addFromFile(const std::string&);
 
-	void deleteTree(Node*);
+	void removeNodeShallow(Node*, Node*);
+
+	void deleteTree(Node*&);
 
 	Node* getParentNode(Node*);
 	Node* getBranchWith(Node*, Node*);

@@ -20,18 +20,9 @@ BinaryTree::BinaryTree(const string& fileName) {
 
 // ƒеструктор дерева
 BinaryTree::~BinaryTree() {
-	deleteTree(root);
-}
-
-// –екурсивно удал€ет все векти дерева
-void BinaryTree::deleteTree(Node* node) {
-	if (node->left != nullptr) {
-		deleteTree(node->left);
+	if (root != nullptr) {
+		deleteTree(root);
 	}
-	if (node->right != nullptr) {
-		deleteTree(node->right);
-	}
-	delete node;
 }
 
 // —оздает новый корень дерева с указанным значением, предварительно удал€€ предыдыщие
@@ -57,11 +48,12 @@ Node* BinaryTree::addTo(Node* node, BRANCH branch, int value) {
 	return newNode;
 }
 
-// ƒобавл€ет новую векту к указанной ветке, если из line удалось получить значение,
-// иначе добавл€ет emptyNode, как новую ветку
+// ƒобавл€ет новую ветку к указанному ноду и удал€ет emptyNode из веток нода,
+// если из line удалось получить значение, иначе добавл€ет emptyNode, как новую ветку
 Node* BinaryTree::addTo(Node* node, BRANCH branch, const string& line, Node* emptyNode) {
 	try {
 		int n = stoi(line);
+		removeNodeShallow(node, emptyNode);
 		return addTo(node, branch, n);
 	}
 	catch (...) {
@@ -87,14 +79,14 @@ Node* BinaryTree::addTo(Node* node, BRANCH branch, const string& line, Node* emp
 * ћетод выводит сообщени€ в консоль, если формат файла невалиден.
 * ѕримеры валидных контентов файлов:
 10
-  25
-    100
-      15
-    2
-      88
-      99
-  1000
-    500
+25
+100
+15
+2
+88
+99
+1000
+500
 *
 1
 ~-4
@@ -115,9 +107,11 @@ void BinaryTree::addFromFile(const string& fileName) {
 	ifstream file(fileName);
 
 	if (!file) {
-		cout << "Coudn't open file" << endl;
+		cout << "Coudn't open file " << fileName << endl;
 		return;
 	}
+
+	string error = "Error parsing file " + fileName + ": ";
 
 	// —читываем и добавл€ем корень дерева
 	int n;
@@ -127,7 +121,7 @@ void BinaryTree::addFromFile(const string& fileName) {
 		n = stoi(line);
 	}
 	catch (...) {
-		cout << "No root provided" << endl;
+		cout << error << "No root provided" << endl;
 		return;
 	}
 	addAsRoot(n);
@@ -144,7 +138,8 @@ void BinaryTree::addFromFile(const string& fileName) {
 			indentator = extractIndenter(line);
 
 			if (indentator.length() == 0) {
-				cout << "No indentator found" << endl;
+				cout << error << "No indentator found on line " << i + 1 << endl;
+				deleteTree(root);
 				break;
 			}
 		}
@@ -158,8 +153,11 @@ void BinaryTree::addFromFile(const string& fileName) {
 		// ¬водим ветку на текущем уровне
 		if (indentLevel == curLevel) {
 
+			// Ћишн€€ ветка
 			if (branch == BRANCH::NEXT) {
-				cout << "Extra branch" << endl;
+				cout << error << "Extra branch on line " << i + 1 << endl;
+				removeNodeShallow(curNode, emptyNode);
+				deleteTree(root);
 				break;
 			}
 
@@ -177,12 +175,7 @@ void BinaryTree::addFromFile(const string& fileName) {
 			// —двигаемс€ вниз по уровн€м, удал€€ все пустые узлы,
 			// пока не дойдем до корн€ или не найдем ветку, в которую нужно добавить новый узел
 			do {
-				if (curNode->left == emptyNode) {
-					curNode->left = nullptr;
-				}
-				if (curNode->right == emptyNode) {
-					curNode->right = nullptr;
-				}
+				removeNodeShallow(curNode, emptyNode);
 				curLevel--;
 				curNode = getParentNode(curNode);
 				if (curNode == nullptr) {
@@ -191,9 +184,10 @@ void BinaryTree::addFromFile(const string& fileName) {
 				branch = getEmptyBranch(curNode);
 			} while (curLevel != indentLevel || branch == BRANCH::NEXT);
 
-			// ƒошли до корн€
+			// ƒошли до корн€ и у него уже есть две ветки
 			if (curNode == nullptr) {
-				cout << "No parent node" << endl;
+				cout << error << "No parent node on line " << i + 1 << endl;
+				deleteTree(root);
 				break;
 			}
 
@@ -208,20 +202,15 @@ void BinaryTree::addFromFile(const string& fileName) {
 		}
 		// —лишком много отступов в файле
 		else {
-			cout << "Too much indentation" << endl;
+			cout << error << "Too much indentation on line " << i + 1 << endl;
+			removeNodeShallow(curNode, emptyNode);
+			deleteTree(root);
 			break;
 		}
 	}
 
 	// ”дал€ем ссылки на пустые узлы из последнего узла
-	if (curNode != nullptr) {
-		if (curNode->left == emptyNode) {
-			curNode->left = nullptr;
-		}
-		if (curNode->right == emptyNode) {
-			curNode->right = nullptr;
-		}
-	}
+	removeNodeShallow(curNode, emptyNode);
 
 	delete emptyNode;
 }
@@ -285,6 +274,32 @@ int BinaryTree::countSubstring(const std::string& str, const std::string& sub) {
 	return count;
 }
 
+// ”дал€ет нод, если он €вл€етс€ веткой указанного нода
+void BinaryTree::removeNodeShallow(Node* node, Node* nodeToRemove) {
+	if (node == nullptr) {
+		return;
+	}
+	if (node->left == nodeToRemove) {
+		node->left = nullptr;
+	}
+	if (node->right == nodeToRemove) {
+		node->right = nullptr;
+	}
+};
+
+
+// –екурсивно удал€ет все векти дерева
+void BinaryTree::deleteTree(Node*& node) {
+	if (node->left != nullptr) {
+		deleteTree(node->left);
+	}
+	if (node->right != nullptr) {
+		deleteTree(node->right);
+	}
+	delete node;
+	node = nullptr;
+}
+
 // ¬ыводит отображение дерева в консоль с `  ` в качестве отступов
 void BinaryTree::print() {
 	print("  ");
@@ -295,6 +310,7 @@ void BinaryTree::print(const string& indentator) {
 	int level = 0;
 	if (root == nullptr) {
 		cout << "Tree is empty" << endl;
+		return;
 	}
 	print(root, level, indentator);
 }
