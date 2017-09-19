@@ -26,6 +26,7 @@ public:
 	void print(const std::string&);
 
 	bool isSorted();
+	bool isSortedLinear();
 
 private:
 	Node* addTo(Node*, BRANCH, int);
@@ -37,7 +38,7 @@ private:
 
 	void deleteTree(Node*&);
 
-	Node* getParentNode(Node*);
+	Node* getBranchWith(Node*);
 	Node* getBranchWith(Node*, Node*);
 
 	std::string extractIndenter(const std::string&);

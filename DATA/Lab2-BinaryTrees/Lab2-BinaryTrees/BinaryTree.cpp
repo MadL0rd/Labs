@@ -1,6 +1,7 @@
 #include "BinaryTree.h"
 #include <fstream>
 #include <sstream>
+#include <vector>
 
 using std::cin;
 using std::cout;
@@ -9,6 +10,7 @@ using std::ifstream;
 using std::string;
 using std::getline;
 using std::stoi;
+using std::vector;
 
 // —оздание пустого дерева
 BinaryTree::BinaryTree() {}
@@ -177,7 +179,7 @@ void BinaryTree::addFromFile(const string& fileName) {
 			do {
 				removeNodeShallow(curNode, emptyNode);
 				curLevel--;
-				curNode = getParentNode(curNode);
+				curNode = getBranchWith(curNode);
 				if (curNode == nullptr) {
 					break;
 				}
@@ -221,7 +223,7 @@ BRANCH BinaryTree::getEmptyBranch(Node* node) {
 }
 
 // ¬озвращает родительскую ветку
-Node* BinaryTree::getParentNode(Node* node) {
+Node* BinaryTree::getBranchWith(Node* node) {
 	return getBranchWith(node, root);
 }
 
@@ -349,7 +351,7 @@ void BinaryTree::printIndentedValue(int value, int level, const string& indentat
 	cout << value << endl;
 }
 
-// ¬озвращает отсортировано ли дерево
+// ¬озвращает отсортировано ли дерево (рекурсивный метод)
 bool BinaryTree::isSorted() {
 	if (root == nullptr) {
 		return true;
@@ -360,4 +362,39 @@ bool BinaryTree::isSorted() {
 // –екурсивно провер€ет, отсортирован ли узел и все его ветки
 bool BinaryTree::isSorted(Node* node) {
 	return (!node->left || node->value >= node->left->value && isSorted(node->left)) && (!node->right || node->value <= node->right->value && isSorted(node->right));
+}
+
+// ¬ќзвращает отсортировано ли дерево (нерекурсивный метод)
+bool BinaryTree::isSortedLinear() {
+	if (root == nullptr) {
+		return true;
+	}
+	vector<Node*> stack;
+	Node* cur = root;
+	bool goLeft = true;
+	while(true){
+		if (cur->left != nullptr && goLeft) {
+			if (cur->left->value > cur->value) {
+				return false;
+			}
+			stack.push_back(cur);
+			cur = cur->left;			
+		}
+		else if (cur->right != nullptr) {
+			if (cur->right->value < cur->value) {
+				return false;
+			}
+			goLeft = true;
+			cur = cur->right;
+		}
+		else{
+			if (stack.size() == 0) {
+				break;
+			}
+			goLeft = false;
+			cur = stack.back();
+			stack.pop_back();
+		}
+	}
+	return true;
 }
