@@ -49,5 +49,5 @@ private:
 	void printIndentedValue(char, int, const std::string&);
 	void printIndentedValue(int, int, const std::string&);
 
-	bool isSorted(Node*);
+	bool isSorted(Node*, Node*, Node*);
 };

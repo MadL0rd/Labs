@@ -353,47 +353,95 @@ void BinaryTree::printIndentedValue(int value, int level, const string& indentat
 
 // ¬озвращает отсортировано ли дерево (рекурсивный метод)
 bool BinaryTree::isSorted() {
-	if (root == nullptr) {
-		return true;
-	}
-	return isSorted(root);
+	return isSorted(root, nullptr, nullptr);
 }
 
 // –екурсивно провер€ет, отсортирован ли узел и все его ветки
-bool BinaryTree::isSorted(Node* node) {
-	return (!node->left || node->value >= node->left->value && isSorted(node->left)) && (!node->right || node->value <= node->right->value && isSorted(node->right));
+bool BinaryTree::isSorted(Node* node, Node* left, Node* right) {
+	if (node == nullptr) {
+		return true;
+	}
+	if (left != nullptr && node->value < left->value) {
+		return false;
+	}
+	if (right != nullptr && node->value > right->value) {
+		return false;
+	}
+	return (
+		isSorted(node->left, left, node) &&
+		isSorted(node->right, node, right)
+	);
 }
 
-// ¬ќзвращает отсортировано ли дерево (нерекурсивный метод)
+// ¬озвращает отсортировано ли дерево (нерекурсивный метод)
 bool BinaryTree::isSortedLinear() {
 	if (root == nullptr) {
 		return true;
 	}
-	vector<Node*> stack;
-	Node* cur = root;
-	bool goLeft = true;
+	vector<Node*> stackMax;	// —тек частично пройденных веток\веток с максимальными значени€ми
+	vector<Node*> stackMin;	// —тек пар веток: ветка с минимальным значением и правой подветкой этой ветки
+	Node* cur = root;		// “екуща€ ветка (узел)
+	Node* curMin = nullptr;	// ¬етка с локальным минимальным значением
+	bool goLeft = true;		// Ќужно ли идти налево (не была ли пройдена лева€ ветка)
+
+	// ѕроходим дерево и провер€ем отсортированность каждой ветки начина€ с корн€
 	while(true){
+		// »дем по левой ветке, если она есть и по ней еще не проходили
 		if (cur->left != nullptr && goLeft) {
-			if (cur->left->value > cur->value) {
+
+			// «апоминаем ветку с локальным минимальным значением и ее правую ветку
+			if (curMin != nullptr) {
+				stackMin.push_back(curMin);
+				curMin = nullptr;
+			}
+
+			// —вер€м значение с родительской веткой и текущим минимумом
+			if (cur->left->value > cur->value || stackMin.size() != 0 && cur->left->value < stackMin.back()->value) {
 				return false;
 			}
-			stack.push_back(cur);
-			cur = cur->left;			
+			
+			// «апоминаем текущую ветку как неполностью пройденную и как локальное максимальное значение
+			stackMax.push_back(cur);
+
+			// ƒвигаемс€ влево
+			cur = cur->left;
 		}
+		// »дем по правой ветке, если она есть
 		else if (cur->right != nullptr) {
-			if (cur->right->value < cur->value) {
+
+			// —вер€м значение с родительской веткой и текущим максимумом
+			if (cur->right->value < cur->value || stackMax.size() != 0 && cur->right->value > stackMax.back()->value) {
 				return false;
 			}
-			goLeft = true;
+
+			// «апоминаем текущую ветку, как локальный минимум
+			curMin = cur;
+
+			// ƒвигаемс€ вправо
 			cur = cur->right;
+
+			// ѕосле движени€ вправо мы хотим двигатьс€ влево
+			goLeft = true;
 		}
+		// ≈сли ни одной ветки нет, идем вверх к последней ветке с непройденной правой подветкой
 		else{
-			if (stack.size() == 0) {
+			// ћы прошли все ветки
+			if (stackMax.size() == 0) {
 				break;
 			}
+
+			// ћы хотим идти по правой ветке
 			goLeft = false;
-			cur = stack.back();
-			stack.pop_back();
+
+			// »дем назад
+			cur = stackMax.back();
+			stackMax.pop_back();
+
+			// ≈сли текуща€ ветка €вл€етс€ правой веткой локального минимума,
+			// забываем этот локальный минимум
+			if (stackMin.size() != 0 && stackMin.back()->right == cur) {
+				stackMin.pop_back();
+			}
 		}
 	}
 	return true;
