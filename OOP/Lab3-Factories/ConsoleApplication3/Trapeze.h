@@ -1,7 +1,7 @@
-#pragma once
+п»ї#pragma once
 #include "Shape.h"
 
-// Трапеция
+// РўСЂР°РїРµС†РёСЏ
 class Trapeze : public Shape {
 public:
 	using Shape::Shape;

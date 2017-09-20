@@ -1,7 +1,7 @@
-#pragma once
+п»ї#pragma once
 #include "Shape.h"
 
-// Шестиугольник
+// РЁРµСЃС‚РёСѓРіРѕР»СЊРЅРёРє
 class Hexagon : public Shape {
 public:
 	using Shape::Shape;

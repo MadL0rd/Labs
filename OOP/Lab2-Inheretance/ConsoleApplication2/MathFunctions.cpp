@@ -1,4 +1,4 @@
-// Наследование
+п»ї// РќР°СЃР»РµРґРѕРІР°РЅРёРµ
 
 #include <cmath>
 #include <iostream>
@@ -8,16 +8,16 @@ using std::cout;
 using std::endl;
 
 
-// Абстрактный класс математических функций
+// РђР±СЃС‚СЂР°РєС‚РЅС‹Р№ РєР»Р°СЃСЃ РјР°С‚РµРјР°С‚РёС‡РµСЃРєРёС… С„СѓРЅРєС†РёР№
 class MathFunction {
 public:
 	virtual double solveFor(double x) = 0;
 };
 
 
-/* Объявление наследующих классов */
+/* РћР±СЉСЏРІР»РµРЅРёРµ РЅР°СЃР»РµРґСѓСЋС‰РёС… РєР»Р°СЃСЃРѕРІ */
 
-// Класс функции параболы
+// РљР»Р°СЃСЃ С„СѓРЅРєС†РёРё РїР°СЂР°Р±РѕР»С‹
 class Parabola : public MathFunction {
 private:
 	double p;
@@ -26,7 +26,7 @@ public:
 	double solveFor(double x);
 };
 
-// Класс функции гиберболы
+// РљР»Р°СЃСЃ С„СѓРЅРєС†РёРё РіРёР±РµСЂР±РѕР»С‹
 class Hyperbola : public MathFunction {
 private:
 	double a, b;
@@ -35,7 +35,7 @@ public:
 	double solveFor(double x);
 };
 
-// Класс функции эллипса
+// РљР»Р°СЃСЃ С„СѓРЅРєС†РёРё СЌР»Р»РёРїСЃР°
 class Ellipse : public MathFunction {
 private:
 	double a, b;
@@ -46,35 +46,35 @@ public:
 
 
 /*
-* Описание наследующих классов 
-* График для проверки функций - https://www.desmos.com/calculator/4gsilibcxn
+* РћРїРёСЃР°РЅРёРµ РЅР°СЃР»РµРґСѓСЋС‰РёС… РєР»Р°СЃСЃРѕРІ 
+* Р“СЂР°С„РёРє РґР»СЏ РїСЂРѕРІРµСЂРєРё С„СѓРЅРєС†РёР№ - https://www.desmos.com/calculator/4gsilibcxn
 */
 
-// Методы параболы - y^2 = 2px
-// Без ограничения p > 0
+// РњРµС‚РѕРґС‹ РїР°СЂР°Р±РѕР»С‹ - y^2 = 2px
+// Р‘РµР· РѕРіСЂР°РЅРёС‡РµРЅРёСЏ p > 0
 Parabola::Parabola(double p) : p(p) {};
 double Parabola::solveFor(double x) {
 	return sqrt(2 * p * x);
 }
 
-// Методы гиперболы - x^2/a^2 - y^2/b^2 = 1
+// РњРµС‚РѕРґС‹ РіРёРїРµСЂР±РѕР»С‹ - x^2/a^2 - y^2/b^2 = 1
 Hyperbola::Hyperbola(double a, double b) : a(a), b(b) {};
 double Hyperbola::solveFor(double x) {
 	return sqrt(((x*x) / (a*a) - 1)*b*b);
 }
 
-// Методы эллипса - x^2/a^2 + y^2/b^2 = 1
-// Без ограничения a > b
+// РњРµС‚РѕРґС‹ СЌР»Р»РёРїСЃР° - x^2/a^2 + y^2/b^2 = 1
+// Р‘РµР· РѕРіСЂР°РЅРёС‡РµРЅРёСЏ a > b
 Ellipse::Ellipse(double a, double b) : a(a), b(b) {};
 double Ellipse::solveFor(double x) {
 	return sqrt((1 - (x*x) / (a*a))*b*b);
 }
 
 
-/* Класс для хранения результатов выполнения функций */
+/* РљР»Р°СЃСЃ РґР»СЏ С…СЂР°РЅРµРЅРёСЏ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ РІС‹РїРѕР»РЅРµРЅРёСЏ С„СѓРЅРєС†РёР№ */
 class Series {
 public:
-	double* data = nullptr;	// Массив результатов
+	double* data = nullptr;	// РњР°СЃСЃРёРІ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
 
 	Series(MathFunction* func, int len);
 
@@ -88,13 +88,13 @@ public:
 	bool isFull();
 
 private:
-	MathFunction* func;	// Класс функции
-	int top = -1;		// Индекс верхнего результата
-	int len;			// Макс. кол-во результатов
+	MathFunction* func;	// РљР»Р°СЃСЃ С„СѓРЅРєС†РёРё
+	int top = -1;		// РРЅРґРµРєСЃ РІРµСЂС…РЅРµРіРѕ СЂРµР·СѓР»СЊС‚Р°С‚Р°
+	int len;			// РњР°РєСЃ. РєРѕР»-РІРѕ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
 };
 
-// Конструктор, принимает указатель на объект одного из классов математических функций
-// и максимальное кол-во сохраняемых y
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ, РїСЂРёРЅРёРјР°РµС‚ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РѕР±СЉРµРєС‚ РѕРґРЅРѕРіРѕ РёР· РєР»Р°СЃСЃРѕРІ РјР°С‚РµРјР°С‚РёС‡РµСЃРєРёС… С„СѓРЅРєС†РёР№
+// Рё РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РєРѕР»-РІРѕ СЃРѕС…СЂР°РЅСЏРµРјС‹С… y
 Series::Series(MathFunction* func, int len) : func(func), len(len) {
 	data = new double[len];
 }
@@ -103,7 +103,7 @@ Series::~Series() {
 	delete[] data;
 }
 
-// Добавляет y = f(x) в массив
+// Р”РѕР±Р°РІР»СЏРµС‚ y = f(x) РІ РјР°СЃСЃРёРІ
 void Series::store(double x) {
 	if (isFull()) {
 		cout << "Full" << endl;
@@ -114,14 +114,14 @@ void Series::store(double x) {
 	cout << y << endl;
 }
 
-// Убирает все сохраненные результаты
+// РЈР±РёСЂР°РµС‚ РІСЃРµ СЃРѕС…СЂР°РЅРµРЅРЅС‹Рµ СЂРµР·СѓР»СЊС‚Р°С‚С‹
 void Series::purge() {
 	while (top--) {
 		data[top] = NULL;
 	}
 }
 
-// Выводит все результаты
+// Р’С‹РІРѕРґРёС‚ РІСЃРµ СЂРµР·СѓР»СЊС‚Р°С‚С‹
 void Series::log() {
 	if (isEmpty()) {
 		cout << "Empty" << endl;
@@ -134,18 +134,18 @@ void Series::log() {
 	}
 }
 
-// Нет результатов
+// РќРµС‚ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ
 bool Series::isEmpty() {
 	return top == -1;
 }
 
-// Массив результатов заполнен
+// РњР°СЃСЃРёРІ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ Р·Р°РїРѕР»РЅРµРЅ
 bool Series::isFull() {
 	return top == len - 1;
 }
 
 
-/* Тестовые вызовы */
+/* РўРµСЃС‚РѕРІС‹Рµ РІС‹Р·РѕРІС‹ */
 int main() {
 	cout << "Ellipse:\n";
 	Series e(&Ellipse(-3, 2.5), 3);

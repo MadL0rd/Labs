@@ -1,20 +1,20 @@
-#pragma once
+п»ї#pragma once
 #include <iostream>
 
-// Ветка дерева
+// Р’РµС‚РєР° РґРµСЂРµРІР°
 struct Node {
 	int value;
 	Node* left = nullptr;
 	Node* right = nullptr;
 };
 
-// Возможные ветки дерева
-// NEXT значит, что обе заняты
+// Р’РѕР·РјРѕР¶РЅС‹Рµ РІРµС‚РєРё РґРµСЂРµРІР°
+// NEXT Р·РЅР°С‡РёС‚, С‡С‚Рѕ РѕР±Рµ Р·Р°РЅСЏС‚С‹
 enum class BRANCH {
 	LEFT, RIGHT, NEXT
 };
 
-// Рекурсивное дерево
+// Р РµРєСѓСЂСЃРёРІРЅРѕРµ РґРµСЂРµРІРѕ
 class BinaryTree {
 public:
 	Node* root = nullptr;

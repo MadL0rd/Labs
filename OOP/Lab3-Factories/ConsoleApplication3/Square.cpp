@@ -1,4 +1,4 @@
-#include <string>
+п»ї#include <string>
 #include <cmath>
 #include <sstream>
 #include <vector>
@@ -9,7 +9,7 @@ using std::string;
 using std::ostringstream;
 using std::initializer_list;
 
-// Конструктор с указанием позиции и стороны квадрата
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ СѓРєР°Р·Р°РЅРёРµРј РїРѕР·РёС†РёРё Рё СЃС‚РѕСЂРѕРЅС‹ РєРІР°РґСЂР°С‚Р°
 Square::Square(const Point& position, const initializer_list<double>& sizes) : Shape(position) {
 	setSize(sizes);
 }
@@ -26,8 +26,8 @@ double Square::getBoundingRadius() const {
 	return sideWidth*sqrt(2) / 2;
 }
 
-// Устанавливает размеры квадрата
-// sizes[0] - длина стороны квадрата
+// РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ СЂР°Р·РјРµСЂС‹ РєРІР°РґСЂР°С‚Р°
+// sizes[0] - РґР»РёРЅР° СЃС‚РѕСЂРѕРЅС‹ РєРІР°РґСЂР°С‚Р°
 void Square::setSize(const initializer_list<double>& sizes) {
 	if (sizes.size() == 1) {
 		sideWidth = sizes.begin()[0];

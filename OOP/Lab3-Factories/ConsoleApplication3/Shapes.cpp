@@ -1,4 +1,4 @@
-// Фабрики
+п»ї// Р¤Р°Р±СЂРёРєРё
 #include <sstream>
 #include "Shapes.h"
 
@@ -7,7 +7,7 @@ using std::cout;
 using std::endl;
 using std::string;
 
-// Выводит информацию о двух фигурах
+// Р’С‹РІРѕРґРёС‚ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ РґРІСѓС… С„РёРіСѓСЂР°С…
 void printInfo(Shape* s, Shape* h) {
 	string difString;
 	double dif = Shape::compare(s, h);

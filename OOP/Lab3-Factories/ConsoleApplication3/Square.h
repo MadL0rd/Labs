@@ -1,7 +1,7 @@
-#pragma once
+п»ї#pragma once
 #include "Shape.h"
 
-// Квадрат
+// РљРІР°РґСЂР°С‚
 class Square : public Shape {
 public:
 	using Shape::Shape;

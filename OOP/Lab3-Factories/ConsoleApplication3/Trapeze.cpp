@@ -1,4 +1,4 @@
-#include <string>
+п»ї#include <string>
 #include <cmath>
 #include <sstream>
 #include <vector>
@@ -10,7 +10,7 @@ using std::string;
 using std::ostringstream;
 using std::initializer_list;
 
-// Конструктор с указанием позиции и размеров трапеции
+// РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃ СѓРєР°Р·Р°РЅРёРµРј РїРѕР·РёС†РёРё Рё СЂР°Р·РјРµСЂРѕРІ С‚СЂР°РїРµС†РёРё
 Trapeze::Trapeze(const Point& position, const initializer_list<double>& sizes) : Shape(position) {
 	setSize(sizes);
 }
@@ -24,10 +24,10 @@ double Trapeze::getBoundingRadius() const {
 	return NULL;
 }
 
-// Устанавливает размеры трапеции
-// sizes[0] - высота
-// sizes[1] - длина верхней стороны
-// sizes[2] - длина нижней стороны
+// РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ СЂР°Р·РјРµСЂС‹ С‚СЂР°РїРµС†РёРё
+// sizes[0] - РІС‹СЃРѕС‚Р°
+// sizes[1] - РґР»РёРЅР° РІРµСЂС…РЅРµР№ СЃС‚РѕСЂРѕРЅС‹
+// sizes[2] - РґР»РёРЅР° РЅРёР¶РЅРµР№ СЃС‚РѕСЂРѕРЅС‹
 void Trapeze::setSize(const initializer_list<double>& sizes) {
 	if (sizes.size() == 3) {
 		height = sizes.begin()[0];
