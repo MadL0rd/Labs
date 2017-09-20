@@ -9,9 +9,9 @@
 
 ## СиАОД  
 
-- [x] [Lab1](https://github.com/unshame/VSRepos/tree/master/DATA/Lab1-Classes)  
-- [x] [Lab2](https://github.com/unshame/VSRepos/tree/master/DATA/Lab2-Inheretance)    
-- [ ] [Lab3](https://github.com/unshame/VSRepos/tree/master/DATA/Lab3-Factories)    
-- [ ] [Lab4](https://github.com/unshame/VSRepos/tree/master/DATA/Lab5-CSharp)    
-- [ ] [Lab5](https://github.com/unshame/VSRepos/tree/master/DATA/Lab5-STLContainers)    
-- [ ] [Lab6](https://github.com/unshame/VSRepos/tree/master/DATA/Lab6-GUI)    
+- [x] [Lab1](https://github.com/unshame/VSRepos/tree/master/DATA/Lab1-Lists)  
+- [x] [Lab2](https://github.com/unshame/VSRepos/tree/master/DATA/Lab2-BinaryTrees)    
+- [ ] [Lab3](https://github.com/unshame/VSRepos/tree/master/DATA/Lab3-Sorting)    
+- [ ] [Lab4](https://github.com/unshame/VSRepos/tree/master/DATA/Lab4-Hashing)    
+- [ ] [Lab5](https://github.com/unshame/VSRepos/tree/master/DATA/Lab5-Combinatorics)    
+- [ ] [Lab6](https://github.com/unshame/VSRepos/tree/master/DATA/Lab6-Heuristics)    
