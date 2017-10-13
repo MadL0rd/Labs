@@ -1,4 +1,4 @@
-﻿// Фабрики
+// Фабрики
 #include <sstream>
 #include "Shapes.h"
 
@@ -29,7 +29,7 @@ void printInfo(Shape* s, Shape* h) {
 		stype << difString << htype << endl <<
 		stype << " intersects " << htype << ": " << Shape::intersects(s, h) << endl <<
 		stype << " contains " << htype << ": " << Shape::contains(s, h) << endl <<
-		stype << " contains " << htype << ": " << Shape::contains(h, s) << endl << endl;
+		htype << " contains " << stype << ": " << Shape::contains(h, s) << endl << endl;
 }
 
 int main() {
@@ -45,8 +45,9 @@ int main() {
 	s->setPosition({ 20, 10 });
 	printInfo(s, h);
 
-	s->setSize({ 1 });
-	h->setPosition({ 100, 100 });
+	s->setSize({ 100 });
+	h->setSize({ 10 });
+	h->setPosition({ 50, 50 });
 	printInfo(s, h);
 
 	delete s;
