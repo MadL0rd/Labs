@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab5_A", "Lab5_A\Lab5_A.vcproj", "{F50EB66F-85B4-481D-B4E0-4A07A68E4488}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab5_B", "Lab5_B\Lab5_B.vcproj", "{4FA5F6F9-B75E-4252-B169-73DF7AC8A914}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F50EB66F-85B4-481D-B4E0-4A07A68E4488}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F50EB66F-85B4-481D-B4E0-4A07A68E4488}.Debug|Win32.Build.0 = Debug|Win32
+		{F50EB66F-85B4-481D-B4E0-4A07A68E4488}.Release|Win32.ActiveCfg = Release|Win32
+		{F50EB66F-85B4-481D-B4E0-4A07A68E4488}.Release|Win32.Build.0 = Release|Win32
+		{4FA5F6F9-B75E-4252-B169-73DF7AC8A914}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4FA5F6F9-B75E-4252-B169-73DF7AC8A914}.Debug|Win32.Build.0 = Debug|Win32
+		{4FA5F6F9-B75E-4252-B169-73DF7AC8A914}.Release|Win32.ActiveCfg = Release|Win32
+		{4FA5F6F9-B75E-4252-B169-73DF7AC8A914}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
