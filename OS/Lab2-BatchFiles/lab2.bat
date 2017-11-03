@@ -12,22 +12,24 @@ if "%date:~2,1%" neq "-" (
 )
 
 :: Введенный год
-set _year=%1
+set _year_temp=%1
 
 :: Проверяем является ли ввод годом в правильном формате ಠ_ಠ
 :start
 set _correct=1
-if "%_year:~0,1%" == "" set _correct=0
-if "%_year:~1,1%" == "" set _correct=0
-if "%_year:~0,1%" lss "0" set _correct=0
-if "%_year:~0,1%" gtr "9" set _correct=0
-if "%_year:~1,1%" lss "0" set _correct=0
-if "%_year:~1,1%" gtr "9" set _correct=0
-if "%_year:~2,1%" neq "" set _correct=0
+if "%_year_temp:~0,1%" == "" set _correct=0
+if "%_year_temp:~1,1%" == "" set _correct=0
+if "%_year_temp:~0,1%" lss "0" set _correct=0
+if "%_year_temp:~0,1%" gtr "9" set _correct=0
+if "%_year_temp:~1,1%" lss "0" set _correct=0
+if "%_year_temp:~1,1%" gtr "9" set _correct=0
+if "%_year_temp:~2,1%" neq "" set _correct=0
 if %_correct% equ 0 (
-	set /p _year=Please input year ^([0-9][0-9]^):
+	set /p _year_temp=Please input year ^([0-9][0-9]^):
 	goto :start
 )
+set _year=%_year_temp%
+
 
 :: Флаг, указывающий, был ли перемещен хотя бы один файл
 set _copied=0
