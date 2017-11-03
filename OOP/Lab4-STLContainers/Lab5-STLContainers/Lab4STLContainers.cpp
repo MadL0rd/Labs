@@ -1,4 +1,4 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <map>
 #include <vector>
 #include <string>
@@ -16,7 +16,7 @@ struct CompCenter {
 typedef multimap<int, CompCenter> DBMapCont;
 typedef vector<CompCenter> DBVectorCont;
 
-// Абстрактный класс базы данных
+// РђР±СЃС‚СЂР°РєС‚РЅС‹Р№ РєР»Р°СЃСЃ Р±Р°Р·С‹ РґР°РЅРЅС‹С…
 class DBBase {
 
 protected:
@@ -33,7 +33,7 @@ protected:
 
 		file >> cc.lab;
 
-		// Проверяем конец файла
+		// РџСЂРѕРІРµСЂСЏРµРј РєРѕРЅРµС† С„Р°Р№Р»Р°
 		if (file.eof()) {
 			cc.year = 0;
 			return cc;
@@ -45,7 +45,7 @@ protected:
 		file >> cc.screen;
 		file >> cc.year;
 
-		// Пропускаем конец строки
+		// РџСЂРѕРїСѓСЃРєР°РµРј РєРѕРЅРµС† СЃС‚СЂРѕРєРё
 		file.get();
 
 		return cc;
@@ -71,7 +71,7 @@ public:
 
 };
 
-// База данных в виде мапы
+// Р‘Р°Р·Р° РґР°РЅРЅС‹С… РІ РІРёРґРµ РјР°РїС‹
 class DBMap : public DBBase {
 private:
 	DBMapCont db;
@@ -105,7 +105,7 @@ public:
 	}
 };
 
-// База данных в виде вектора
+// Р‘Р°Р·Р° РґР°РЅРЅС‹С… РІ РІРёРґРµ РІРµРєС‚РѕСЂР°
 class DBVector : public DBBase {
 private:
 	DBVectorCont db;
@@ -143,7 +143,7 @@ public:
 	}
 };
 
-// Считывает год из консоли и возвращает его
+// РЎС‡РёС‚С‹РІР°РµС‚ РіРѕРґ РёР· РєРѕРЅСЃРѕР»Рё Рё РІРѕР·РІСЂР°С‰Р°РµС‚ РµРіРѕ
 int readYear() {
 	string yearString;
 	cout << "Enter year: ";
@@ -164,7 +164,7 @@ int main() {
 	
 	string filename = "input.txt";
 
-	// Считываем информацию из файла в базы данных
+	// РЎС‡РёС‚С‹РІР°РµРј РёРЅС„РѕСЂРјР°С†РёСЋ РёР· С„Р°Р№Р»Р° РІ Р±Р°Р·С‹ РґР°РЅРЅС‹С…
 	try {
 		dbMap.read(filename);
 		dbVector.read(filename);
@@ -173,7 +173,7 @@ int main() {
 		cout << e.what() << endl;
 	}
 
-	// Выводим нужные элементы
+	// Р’С‹РІРѕРґРёРј РЅСѓР¶РЅС‹Рµ СЌР»РµРјРµРЅС‚С‹
 	int year = readYear();
 	while (year > 0) {
 		cout << "Map:" << endl;
