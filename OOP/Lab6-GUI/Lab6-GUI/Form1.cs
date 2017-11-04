@@ -114,7 +114,7 @@ namespace Lab6_GUI
             var item = series.store(textBoxx.Text.Length > 0 ? Convert.ToDouble(textBoxx.Text) : 0);
             string[] textItem = { Convert.ToString(item.Item1), Convert.ToString(item.Item2) };
             var listItem = new ListViewItem(textItem);
-            listView.Items.Add(listItem);
+            listView.Items.Insert(0, listItem);
         }
 
         private void linkGraph_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
