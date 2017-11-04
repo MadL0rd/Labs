@@ -21,6 +21,7 @@ namespace Lab6_GUI
 
             // Включаем отрицательные числа
             textBoxa.Minimum = textBoxb.Minimum = textBoxx.Minimum = Int32.MinValue;
+            textBoxa.Maximum = textBoxb.Maximum = textBoxx.Maximum = Int32.MaxValue;
 
             // Кликаем по первой радио-кнопке
             radioParabola.Checked = true;
@@ -29,26 +30,28 @@ namespace Lab6_GUI
         // Модифицирует интерфейс в зависимости от текущей выбранной функции и возвращает функцию
         public MathFunction getFunction()
         {
+            string a = textBoxa.Text;
+            string b = textBoxb.Text;
             if (radioParabola.Checked)
             {
                 labela.Text = "p";
                 labelb.Visible = false;
                 textBoxb.Visible = false;
-                return new Parabola(Convert.ToDouble(textBoxa.Text));
+                return new Parabola(a.Length > 0 ? Convert.ToDouble(a) : 0);
             }
             else if(radioHyperbola.Checked)
             {
                 labela.Text = "a";
                 labelb.Visible = true;
                 textBoxb.Visible = true;
-                return new Hyperbola(Convert.ToDouble(textBoxa.Text), Convert.ToDouble(textBoxb.Text));
+                return new Hyperbola(a.Length > 0 ? Convert.ToDouble(a) : 0, b.Length > 0 ? Convert.ToDouble(b) : 0);
             }
             else
             {
                 labela.Text = "a";
                 labelb.Visible = true;
                 textBoxb.Visible = true;
-                return new Ellipse(Convert.ToDouble(textBoxa.Text), Convert.ToDouble(textBoxb.Text));
+                return new Ellipse(a.Length > 0 ? Convert.ToDouble(a) : 0, b.Length > 0 ? Convert.ToDouble(b) : 0);
             }
         }
 
@@ -64,11 +67,19 @@ namespace Lab6_GUI
         */
         private void textBoxa_TextChanged(object sender, EventArgs e)
         {
+            if (textBoxa.Text.Length == 0)
+            {
+                textBoxa.Text = "0";
+            }
             changeFunction();
         }
 
         private void textBoxb_TextChanged(object sender, EventArgs e)
         {
+            if (textBoxb.Text.Length == 0)
+            {
+                textBoxb.Text = "0";
+            }
             changeFunction();
         }
 
@@ -95,7 +106,11 @@ namespace Lab6_GUI
         // Вызывает y(x), конвертирует результат в строки и добавляет в список
         private void buttonCalc_Click(object sender, EventArgs e)
         {
-            var item = series.store(Convert.ToDouble(textBoxx.Text));
+            if (textBoxx.Text.Length == 0)
+            {
+                textBoxx.Text = "0";
+            }
+            var item = series.store(textBoxx.Text.Length > 0 ? Convert.ToDouble(textBoxx.Text) : 0);
             string[] textItem = { Convert.ToString(item.Item1), Convert.ToString(item.Item2) };
             var listItem = new ListViewItem(textItem);
             listView.Items.Add(listItem);

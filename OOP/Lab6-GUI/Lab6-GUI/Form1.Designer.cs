@@ -94,7 +94,7 @@ namespace Lab6_GUI
             this.y});
             this.listView.Location = new System.Drawing.Point(16, 120);
             this.listView.Name = "listView";
-            this.listView.Size = new System.Drawing.Size(310, 113);
+            this.listView.Size = new System.Drawing.Size(312, 113);
             this.listView.TabIndex = 5;
             this.listView.UseCompatibleStateImageBehavior = false;
             this.listView.View = System.Windows.Forms.View.Details;
