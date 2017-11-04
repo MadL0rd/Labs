@@ -60,6 +60,7 @@ namespace Lab6_GUI
         {
             listView.Items.Clear();
             series.setFunction(getFunction());
+            labelFunc.Text = series.getInfo();
         }
 
         /* 
@@ -114,6 +115,11 @@ namespace Lab6_GUI
             string[] textItem = { Convert.ToString(item.Item1), Convert.ToString(item.Item2) };
             var listItem = new ListViewItem(textItem);
             listView.Items.Add(listItem);
+        }
+
+        private void linkGraph_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://www.desmos.com/calculator/4gsilibcxn");
         }
     }
 }

@@ -8,6 +8,7 @@ namespace MathFunctions
     public abstract class MathFunction
     {
         public abstract double solveFor(double x);
+        public abstract string getInfo();
     }
 
     /*
@@ -30,6 +31,9 @@ namespace MathFunctions
         {
             return Math.Sqrt(2 * p * x);
         }
+        public override string getInfo() {
+            return "y^2 = 2px";
+        }
     }
 
     // Класс функции гиберболы
@@ -46,6 +50,10 @@ namespace MathFunctions
         public override double solveFor(double x)
         {
             return Math.Sqrt(((x * x) / (a * a) - 1) * b * b);
+        }
+        public override string getInfo()
+        {
+            return "x^2/a^2 - y^2/b^2 = 1";
         }
     }
 
@@ -64,6 +72,10 @@ namespace MathFunctions
         public override double solveFor(double x)
         {
             return Math.Sqrt((1 - (x * x) / (a * a)) * b * b);
+        }
+        public override string getInfo()
+        {
+            return "x^2/a^2 + y^2/b^2 = 1";
         }
     }
 
@@ -98,10 +110,17 @@ namespace MathFunctions
             data.Clear();
         }
 
+        // Устанавливает функцию и очищает хранилище
         public void setFunction(MathFunction func)
         {
             purge();
             this.func = func;
+        }
+
+        // Возвращает текстовую версию текущей функции
+        public string getInfo()
+        {
+            return func.getInfo();
         }
 
     }

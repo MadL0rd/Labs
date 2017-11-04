@@ -43,6 +43,8 @@ namespace Lab6_GUI
             this.buttonCalc = new System.Windows.Forms.Button();
             this.buttonClear = new System.Windows.Forms.Button();
             this.textBoxx = new System.Windows.Forms.NumericUpDown();
+            this.labelFunc = new System.Windows.Forms.Label();
+            this.linkGraph = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxa)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxb)).BeginInit();
             this.groupFuncSelect.SuspendLayout();
@@ -172,7 +174,7 @@ namespace Lab6_GUI
             // 
             // buttonCalc
             // 
-            this.buttonCalc.Location = new System.Drawing.Point(16, 237);
+            this.buttonCalc.Location = new System.Drawing.Point(15, 237);
             this.buttonCalc.Name = "buttonCalc";
             this.buttonCalc.Size = new System.Drawing.Size(152, 25);
             this.buttonCalc.TabIndex = 9;
@@ -182,9 +184,9 @@ namespace Lab6_GUI
             // 
             // buttonClear
             // 
-            this.buttonClear.Location = new System.Drawing.Point(16, 269);
+            this.buttonClear.Location = new System.Drawing.Point(15, 269);
             this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(312, 25);
+            this.buttonClear.Size = new System.Drawing.Size(314, 25);
             this.buttonClear.TabIndex = 10;
             this.buttonClear.Text = "Clear";
             this.buttonClear.UseVisualStyleBackColor = true;
@@ -198,11 +200,33 @@ namespace Lab6_GUI
             this.textBoxx.Size = new System.Drawing.Size(152, 22);
             this.textBoxx.TabIndex = 4;
             // 
+            // labelFunc
+            // 
+            this.labelFunc.AutoSize = true;
+            this.labelFunc.Location = new System.Drawing.Point(13, 297);
+            this.labelFunc.Name = "labelFunc";
+            this.labelFunc.Size = new System.Drawing.Size(80, 14);
+            this.labelFunc.TabIndex = 11;
+            this.labelFunc.Text = "placeholder";
+            // 
+            // linkGraph
+            // 
+            this.linkGraph.AutoSize = true;
+            this.linkGraph.Location = new System.Drawing.Point(249, 297);
+            this.linkGraph.Name = "linkGraph";
+            this.linkGraph.Size = new System.Drawing.Size(83, 14);
+            this.linkGraph.TabIndex = 12;
+            this.linkGraph.TabStop = true;
+            this.linkGraph.Text = "Open Graph";
+            this.linkGraph.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkGraph_LinkClicked);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 14F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(344, 307);
+            this.ClientSize = new System.Drawing.Size(344, 320);
+            this.Controls.Add(this.linkGraph);
+            this.Controls.Add(this.labelFunc);
             this.Controls.Add(this.textBoxx);
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.buttonCalc);
@@ -222,6 +246,7 @@ namespace Lab6_GUI
             this.groupParamSelect.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxx)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -242,6 +267,8 @@ namespace Lab6_GUI
         private System.Windows.Forms.NumericUpDown textBoxx;
         private System.Windows.Forms.ColumnHeader x;
         private System.Windows.Forms.ColumnHeader y;
+        private System.Windows.Forms.Label labelFunc;
+        private System.Windows.Forms.LinkLabel linkGraph;
     }
 }
 
