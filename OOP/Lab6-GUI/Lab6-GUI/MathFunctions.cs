@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Lab5_CSharp
+namespace MathFunctions
 {
     // Абстрактный класс математических функций
-    abstract class MathFunction
+    public abstract class MathFunction
     {
         public abstract double solveFor(double x);
     }
@@ -16,7 +16,7 @@ namespace Lab5_CSharp
     */
 
     // Класс функции параболы
-    class Parabola : MathFunction
+    public class Parabola : MathFunction
     {
         private double p;
 
@@ -33,23 +33,24 @@ namespace Lab5_CSharp
     }
 
     // Класс функции гиберболы
-    class Hyperbola : MathFunction
+    public class Hyperbola : MathFunction
     {
         private double a, b;
-        
+
         // Методы гиперболы - x^2/a^2 - y^2/b^2 = 1
-        public Hyperbola(double a, double b) {
+        public Hyperbola(double a, double b)
+        {
             this.a = a;
             this.b = b;
         }
         public override double solveFor(double x)
-            {
-                return Math.Sqrt(((x * x) / (a * a) - 1) * b * b);
-            }
+        {
+            return Math.Sqrt(((x * x) / (a * a) - 1) * b * b);
+        }
     }
 
     // Класс функции эллипса
-    class Ellipse : MathFunction
+    public class Ellipse : MathFunction
     {
         private double a, b;
 
@@ -67,22 +68,28 @@ namespace Lab5_CSharp
     }
 
     /* Класс для хранения результатов выполнения функций */
-    class Series
+    public class Series
     {
         private MathFunction func; // Объект функции
-        public List<double> data;  // Массив результатов
+        public List<Tuple<double, double>> data;  // Массив результатов
+
+        public Series()
+        {
+            data = new List<Tuple<double, double>>();
+        }
 
         // Конструктор принимает объект одного из классов математических функций
         public Series(MathFunction func)
         {
-            data = new List<double>();
+            data = new List<Tuple<double, double>>();
             this.func = func;
         }
 
         // Добавляет y = f(x) в массив
-        public void store(double x)
+        public Tuple<double, double> store(double x)
         {
-            data.Add(func.solveFor(x));
+            data.Add(new Tuple<double, double>( x, func.solveFor(x) ));
+            return data.Last();
         }
 
         // Убирает все сохраненные результаты
@@ -91,49 +98,11 @@ namespace Lab5_CSharp
             data.Clear();
         }
 
-        // Выводит все результаты
-        public void log()
+        public void setFunction(MathFunction func)
         {
-            if(data.Count() == 0)
-            {
-                Console.WriteLine("Empty");
-                return;
-            }
-            data.ForEach(y => Console.WriteLine(y));
+            purge();
+            this.func = func;
         }
 
-    }
-
-    /* Тестовые вызовы */
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Ellipse:");
-            var e = new Series(new Ellipse(-3, 2.5));
-            e.store(2);
-            e.store(10);
-            e.store(-1);
-            e.store(-3);
-            e.log();
-            e.purge();
-            e.log();
-
-            Console.WriteLine("Parabola:");
-            var p = new Series(new Parabola(1));
-            p.store(2);
-            p.store(10);
-            p.store(-1);
-            p.store(-3);
-            p.log();
-
-            Console.WriteLine("Hyperbola:");
-            var h = new Series(new Hyperbola(2, 1));
-            h.store(2);
-            h.store(10);
-            h.store(-1);
-            h.store(3);
-            h.log();
-        }
     }
 }
