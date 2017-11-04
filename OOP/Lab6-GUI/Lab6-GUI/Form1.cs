@@ -119,7 +119,9 @@ namespace Lab6_GUI
 
         private void linkGraph_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://www.desmos.com/calculator/4gsilibcxn");
+            var func = labelFunc.Text.Replace("a", textBoxa.Text).Replace("p", textBoxa.Text).Replace("b", textBoxb.Text).Replace("+", "%2B");
+            string uri = new Uri("https://www.wolframalpha.com/input/?i=plot " + func).AbsoluteUri;
+            System.Diagnostics.Process.Start(uri);
         }
     }
 }

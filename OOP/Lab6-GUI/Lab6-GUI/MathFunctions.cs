@@ -32,7 +32,7 @@ namespace MathFunctions
             return Math.Sqrt(2 * p * x);
         }
         public override string getInfo() {
-            return "y^2 = 2px";
+            return "y^2 = 2*px";
         }
     }
 

@@ -217,7 +217,7 @@ namespace Lab6_GUI
             this.linkGraph.Size = new System.Drawing.Size(83, 14);
             this.linkGraph.TabIndex = 12;
             this.linkGraph.TabStop = true;
-            this.linkGraph.Text = "Open Graph";
+            this.linkGraph.Text = "Plot Function";
             this.linkGraph.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkGraph_LinkClicked);
             // 
             // Form1
