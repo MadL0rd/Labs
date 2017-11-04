@@ -3,9 +3,9 @@
 - [x] [Lab1](https://github.com/unshame/VSRepos/tree/master/OOP/Lab1-Classes)  
 - [x] [Lab2](https://github.com/unshame/VSRepos/tree/master/OOP/Lab2-Inheretance)  
 - [x] [Lab3](https://github.com/unshame/VSRepos/tree/master/OOP/Lab3-Factories)  
-- [ ] [Lab4](https://github.com/unshame/VSRepos/tree/master/OOP/Lab4-STLContainers)  
-- [ ] [Lab5](https://github.com/unshame/VSRepos/tree/master/OOP/Lab5-CSharp)  
-- [ ] [Lab6](https://github.com/unshame/VSRepos/tree/master/OOP/Lab6-GUI)  
+- [x] [Lab4](https://github.com/unshame/VSRepos/tree/master/OOP/Lab4-STLContainers)  
+- [x] [Lab5](https://github.com/unshame/VSRepos/tree/master/OOP/Lab5-CSharp)  
+- [x] [Lab6](https://github.com/unshame/VSRepos/tree/master/OOP/Lab6-GUI)  
 
 ## СиАОД  
 
