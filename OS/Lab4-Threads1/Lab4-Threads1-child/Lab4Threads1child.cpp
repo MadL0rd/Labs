@@ -39,21 +39,13 @@ int main(int argc, const char* argv[])
 	// Убиваем другой процесс
 	// Если нужно ждем пока основной процесс закончит предыдущее убийство
 	std::cout << "Killing random process" << std::endl;
-	while (true) {
-		if (WaitForSingleObject(killOtherNotify, 0) != WAIT_OBJECT_0) {
-			SetEvent(killOtherNotify);
-			break;
-		}
-	}	
+	while (WaitForSingleObject(killOtherNotify, 0) == WAIT_OBJECT_0);
+	SetEvent(killOtherNotify);
 
 	// Ждем, пока этот процесс убьют
 	std::cout << "Waiting to be killed" << std::endl;
-	while (true) {
-		if (WaitForSingleObject(killSelfHandler, INFINITE) == WAIT_OBJECT_0) {
-			std::cout << "Killed" << std::endl;
-			break;
-		}
-	}
+	while (WaitForSingleObject(killSelfHandler, INFINITE) != WAIT_OBJECT_0);
+	std::cout << "Killed" << std::endl;
 
 	// Закрываем хэндлы убийств
 	CloseHandle(killSelfHandler);
@@ -63,12 +55,8 @@ int main(int argc, const char* argv[])
 	system("pause");
 
 	// Сообщаем основному процессу, что мы закрываемся
-	while (true) {
-		if (WaitForSingleObject(closedNotify, 0) != WAIT_OBJECT_0) {
-			SetEvent(closedNotify);
-			break;
-		}
-	}
+	while (WaitForSingleObject(closedNotify, 0) == WAIT_OBJECT_0);
+	SetEvent(closedNotify);
 
 	// Закрываем хэндл ивента закрытия
 	CloseHandle(closedNotify);
