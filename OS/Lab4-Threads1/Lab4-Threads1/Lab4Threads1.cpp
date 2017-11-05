@@ -183,14 +183,14 @@ int main(int argc, wchar_t* argv[])
 					process.opened = false;
 					SetEvent(process.handle);
 
-					// Ресетим ивент закрытия случайного процесса
-					ResetEvent(hKillRandom);
-
 					std::cout << "Closing process " << process.id << std::endl;
 				}
 				else {
 					std::cout << "All processes already closing or closed" << std::endl;
 				}
+
+				// Ресетим ивент закрытия случайного процесса
+				ResetEvent(hKillRandom);
 				continue;
 			}
 			// Процесс сообщил, что закрылся, с этого момента он нам не важен
