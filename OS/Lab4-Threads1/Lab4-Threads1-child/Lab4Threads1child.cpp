@@ -1,4 +1,4 @@
-#include "windows.h"
+п»ї#include "windows.h"
 #include <stdlib.h>
 #include <locale.h>
 #include <iostream>
@@ -6,7 +6,7 @@
 #include <tchar.h>
 #include <ctime>
 
-// Создает и возвращает хэндл для ивента
+// РЎРѕР·РґР°РµС‚ Рё РІРѕР·РІСЂР°С‰Р°РµС‚ С…СЌРЅРґР» РґР»СЏ РёРІРµРЅС‚Р°
 HANDLE openEvent(const char eventName[], int errCode) {
 	HANDLE handle = OpenEvent(EVENT_ALL_ACCESS, FALSE, eventName);
 	if (!handle) {
@@ -19,25 +19,25 @@ HANDLE openEvent(const char eventName[], int errCode) {
 
 int main(int argc, const char* argv[])
 {
-	// id процесса
+	// id РїСЂРѕС†РµСЃСЃР°
 	int pid = atoi(argv[0]);
 
-	// Время сна
+	// Р’СЂРµРјСЏ СЃРЅР°
 	int delay = atoi(argv[1]);
 
-	// Ивент, сообщающий этому процессу, что нужно закрываться
+	// РРІРµРЅС‚, СЃРѕРѕР±С‰Р°СЋС‰РёР№ СЌС‚РѕРјСѓ РїСЂРѕС†РµСЃСЃСѓ, С‡С‚Рѕ РЅСѓР¶РЅРѕ Р·Р°РєСЂС‹РІР°С‚СЊСЃСЏ
 	HANDLE killSelfHandler = openEvent(argv[2], 1);  
-	// Ивент, сообщающий основному процессу, что нужно закрыть случайный процесс
+	// РРІРµРЅС‚, СЃРѕРѕР±С‰Р°СЋС‰РёР№ РѕСЃРЅРѕРІРЅРѕРјСѓ РїСЂРѕС†РµСЃСЃСѓ, С‡С‚Рѕ РЅСѓР¶РЅРѕ Р·Р°РєСЂС‹С‚СЊ СЃР»СѓС‡Р°Р№РЅС‹Р№ РїСЂРѕС†РµСЃСЃ
 	HANDLE killOtherNotify = openEvent(argv[3], 2); 
-	// Ивент, сообщающий основному процессу, что этот процесс закрылся
+	// РРІРµРЅС‚, СЃРѕРѕР±С‰Р°СЋС‰РёР№ РѕСЃРЅРѕРІРЅРѕРјСѓ РїСЂРѕС†РµСЃСЃСѓ, С‡С‚Рѕ СЌС‚РѕС‚ РїСЂРѕС†РµСЃСЃ Р·Р°РєСЂС‹Р»СЃСЏ
 	HANDLE closedNotify = openEvent(argv[4], 3);
 
-	// Спим указанное время
+	// РЎРїРёРј СѓРєР°Р·Р°РЅРЅРѕРµ РІСЂРµРјСЏ
 	std::cout << "Sleeping " << (double(delay) / 1000) << "sec" << std::endl;
 	Sleep(delay);
 
-	// Убиваем другой процесс
-	// Если нужно ждем пока основной процесс закончит предыдущее убийство
+	// РЈР±РёРІР°РµРј РґСЂСѓРіРѕР№ РїСЂРѕС†РµСЃСЃ
+	// Р•СЃР»Рё РЅСѓР¶РЅРѕ Р¶РґРµРј РїРѕРєР° РѕСЃРЅРѕРІРЅРѕР№ РїСЂРѕС†РµСЃСЃ Р·Р°РєРѕРЅС‡РёС‚ РїСЂРµРґС‹РґСѓС‰РµРµ СѓР±РёР№СЃС‚РІРѕ
 	std::cout << "Killing random process" << std::endl;
 	while (true) {
 		if (WaitForSingleObject(killOtherNotify, 0) != WAIT_OBJECT_0) {
@@ -46,7 +46,7 @@ int main(int argc, const char* argv[])
 		}
 	}	
 
-	// Ждем, пока этот процесс убьют
+	// Р–РґРµРј, РїРѕРєР° СЌС‚РѕС‚ РїСЂРѕС†РµСЃСЃ СѓР±СЊСЋС‚
 	std::cout << "Waiting to be killed" << std::endl;
 	while (true) {
 		if (WaitForSingleObject(killSelfHandler, INFINITE) == WAIT_OBJECT_0) {
@@ -55,14 +55,14 @@ int main(int argc, const char* argv[])
 		}
 	}
 
-	// Закрываем хэндлы убийств
+	// Р—Р°РєСЂС‹РІР°РµРј С…СЌРЅРґР»С‹ СѓР±РёР№СЃС‚РІ
 	CloseHandle(killSelfHandler);
 	CloseHandle(killOtherNotify);
 
-	// Ждем нажатия любой клавиши
+	// Р–РґРµРј РЅР°Р¶Р°С‚РёСЏ Р»СЋР±РѕР№ РєР»Р°РІРёС€Рё
 	system("pause");
 
-	// Сообщаем основному процессу, что мы закрываемся
+	// РЎРѕРѕР±С‰Р°РµРј РѕСЃРЅРѕРІРЅРѕРјСѓ РїСЂРѕС†РµСЃСЃСѓ, С‡С‚Рѕ РјС‹ Р·Р°РєСЂС‹РІР°РµРјСЃСЏ
 	while (true) {
 		if (WaitForSingleObject(closedNotify, 0) != WAIT_OBJECT_0) {
 			SetEvent(closedNotify);
@@ -70,10 +70,10 @@ int main(int argc, const char* argv[])
 		}
 	}
 
-	// Закрываем хэндл ивента закрытия
+	// Р—Р°РєСЂС‹РІР°РµРј С…СЌРЅРґР» РёРІРµРЅС‚Р° Р·Р°РєСЂС‹С‚РёСЏ
 	CloseHandle(closedNotify);
 
-	// Закрываемся
+	// Р—Р°РєСЂС‹РІР°РµРјСЃСЏ
 	return 0;
 }
 
