@@ -168,46 +168,44 @@ int main(int argc, wchar_t* argv[])
 		int waitStatus = WaitForMultipleObjects(2, mainHandles, false, INFINITE);
 
 		// Обрабатываем события
-		if (waitStatus >= 0 && waitStatus < numMainHandles) {
-
-			// Процесс хочет закрыть другой процесс
-			if (mainHandles[waitStatus] == hKillRandom) {
-
-				// Находим случайный открытый процесс
-				Proc& process = processes[getRandomAliveProcessIndex(processes)];
-				if (process.opened) {
-
-					// Закрываем его
-					// Если он уже закрыл другой процесс, то он пришлет сообщение о своем закрытии
-					// В противном случае он это сделает после закрытия другого процесса
-					process.opened = false;
-					SetEvent(process.handle);
-
-					std::cout << "Closing process " << process.id << std::endl;
-				}
-				else {
-					std::cout << "All processes already closing or closed" << std::endl;
-				}
-
-				// Ресетим ивент закрытия случайного процесса
-				ResetEvent(hKillRandom);
-				continue;
-			}
-			// Процесс сообщил, что закрылся, с этого момента он нам не важен
-			else if(mainHandles[waitStatus] == hClose){
-
-				// Уменьшаем кол-во открытых процессов
-				processesOpened--;
-
-				// Ресетим ивент закрытия процесса
-				ResetEvent(hClose);
-
-				std::cout << "A process closed" << std::endl;
-
-				continue;
-			}
+		if (waitStatus < 0 || waitStatus >= numMainHandles) {
+			std::cout << "Error when waiting for response " << waitStatus << std::endl;
+			continue;
 		}
-		std::cout << "Error when waiting for response " << waitStatus << std::endl;
+
+		// Процесс хочет закрыть другой процесс
+		if (mainHandles[waitStatus] == hKillRandom) {
+
+			// Находим случайный открытый процесс
+			Proc& process = processes[getRandomAliveProcessIndex(processes)];
+			if (process.opened) {
+
+				// Закрываем его
+				// Если он уже закрыл другой процесс, то он пришлет сообщение о своем закрытии
+				// В противном случае он это сделает после закрытия другого процесса
+				process.opened = false;
+				SetEvent(process.handle);
+
+				std::cout << "Closing process " << process.id << std::endl;
+			}
+			else {
+				std::cout << "All processes already closing or closed" << std::endl;
+			}
+
+			// Ресетим ивент закрытия случайного процесса
+			ResetEvent(hKillRandom);
+		}
+		// Процесс сообщил, что закрылся, с этого момента он нам не важен
+		else if(mainHandles[waitStatus] == hClose){
+
+			// Уменьшаем кол-во открытых процессов
+			processesOpened--;
+
+			// Ресетим ивент закрытия процесса
+			ResetEvent(hClose);
+
+			std::cout << "A process closed" << std::endl;
+		}		
 	}
 
 	// Закрываем все основные хэндлы
