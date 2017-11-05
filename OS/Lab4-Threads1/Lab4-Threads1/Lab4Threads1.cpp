@@ -125,7 +125,7 @@ int getRandomAliveProcessIndex(const std::vector<Proc> processes) {
 
 	// Возвращаем случайный или первый, если все закрыты
 	if (processesAlive.size() > 0) {
-		return processesAlive[std::rand() % processesAlive.size()];
+		return processesAlive[getRandomBetween(0, processesAlive.size() - 1)];
 	}
 	else {
 		return 0;
