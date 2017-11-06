@@ -22,5 +22,5 @@
 - [x] [Lab2](https://github.com/unshame/VSRepos/tree/master/OS/Lab2-BatchFiles)    
 - [ ] Lab3   
 - [x] [Lab4](https://github.com/unshame/VSRepos/tree/master/OS/Lab4-Threads1)    
-- [ ] [Lab5](https://github.com/unshame/VSRepos/tree/master/OS/Lab5-Threads2)    
+- [x] [Lab5](https://github.com/unshame/VSRepos/tree/master/OS/Lab5-Threads2)    
 - [ ] [Lab6](https://github.com/unshame/VSRepos/tree/master/OS/Lab6-SystemMonitoring)    

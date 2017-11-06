@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab5-Threads2", "Lab5-Threads2\Lab5-Threads2.vcxproj", "{79DEEA80-A11A-49E5-8E85-F6018FE05E02}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab5-Threads2-child", "Lab5-Threads2-child\Lab5-Threads2-child.vcxproj", "{EFAD210B-4821-49F8-AE0E-0541782C5DBE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{79DEEA80-A11A-49E5-8E85-F6018FE05E02}.Release|x64.Build.0 = Release|x64
 		{79DEEA80-A11A-49E5-8E85-F6018FE05E02}.Release|x86.ActiveCfg = Release|Win32
 		{79DEEA80-A11A-49E5-8E85-F6018FE05E02}.Release|x86.Build.0 = Release|Win32
+		{EFAD210B-4821-49F8-AE0E-0541782C5DBE}.Debug|x64.ActiveCfg = Debug|x64
+		{EFAD210B-4821-49F8-AE0E-0541782C5DBE}.Debug|x64.Build.0 = Debug|x64
+		{EFAD210B-4821-49F8-AE0E-0541782C5DBE}.Debug|x86.ActiveCfg = Debug|Win32
+		{EFAD210B-4821-49F8-AE0E-0541782C5DBE}.Debug|x86.Build.0 = Debug|Win32
+		{EFAD210B-4821-49F8-AE0E-0541782C5DBE}.Release|x64.ActiveCfg = Release|x64
+		{EFAD210B-4821-49F8-AE0E-0541782C5DBE}.Release|x64.Build.0 = Release|x64
+		{EFAD210B-4821-49F8-AE0E-0541782C5DBE}.Release|x86.ActiveCfg = Release|Win32
+		{EFAD210B-4821-49F8-AE0E-0541782C5DBE}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
