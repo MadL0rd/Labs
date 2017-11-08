@@ -1,6 +1,5 @@
 ﻿/*
 * Находит самый длинный простой цикл в полном направленном или ненаправленном графе методом полного перебора.
-* Временная сложность - O((n+1)^(n-1)!)
 */
 
 #include <iostream>
@@ -9,8 +8,13 @@
 #include <cmath>
 #include <ctime>
 #include <algorithm>
+#include <chrono>
 
 using namespace std;
+
+using chrono::high_resolution_clock;
+using chrono::duration_cast;
+using chrono::milliseconds;
 
 enum class INPUT {
 	CONSOLE, FILE, RANDOM
@@ -33,11 +37,6 @@ struct Node {
 	vector<int> edges; // Длины ребер
 };
 
-int n = 0;			// Кол-во вершин графа
-vector<Node> graph;	// Граф
-vector<int> path;	// Самый длинный цикл
-int maxLength = 0;	// Длина самого длинного цикла
-
 // Возвращает случайное число между мин и макс
 int getRandomBetween(int min, int max) {
 	int n = max - min + 1;
@@ -49,8 +48,64 @@ int getRandomBetween(int min, int max) {
 	return min + x % n;
 }
 
+// Нахождение самого длинного простого цикла в полном графе это NP-полная задача
+// Перебираем все возможные циклы и находим самый длинный
+// Мы хотим прийти из стартовой (пусть будет первой) вершины в нее же,
+// поэтому ограничиваем перебор остальными вершинами (не обязательно всеми)
+pair<int, vector<int>> getLongestCycle(vector<Node> graph, int n) {
+	int maxLength = 0;
+	vector<int> path;
+	while (graph.size() >= 2) {
+		do {
+			NUM_PERMUTATIONS++;
+			NUM_ACCESSES += 2;
+
+			// Длина от стартовой вершины до следующей за ней (текущей)
+			int v = graph[1].u;
+			int length = graph[0].edges[v];
+
+			// Длина от текущей до следующей
+			for (int u = 1; u < n - 1; u++) {
+				NUM_ACCESSES++;
+				v = graph[u + 1].u;
+				length += graph[u].edges[v];
+			}
+
+			// Длина от последней до стартовой
+			v = 0;
+			length += graph[n - 1].edges[v];
+
+			// Нашли более длинный?
+			if (length > maxLength) {
+				maxLength = length;
+				path.resize(n + 1);
+				path[n] = path[0] = 1;
+				for (int i = 1; i < n; i++) {
+					path[i] = graph[i].u + 1;
+				}
+			}
+		} while (
+			next_permutation(
+				graph.begin() + 1,
+				graph.end(),
+				[](Node a, Node b) {
+					return a.u < b.u;
+				}
+			)
+		);
+		graph.pop_back();
+		n--;
+	}
+	return { maxLength, path };
+}
+
 int main(){
 	srand(int(time(0)));
+
+	int n = 0;			// Кол-во вершин графа
+	vector<Node> graph;	// Граф
+	vector<int> path;	// Самый длинный цикл
+	int maxLength = 0;	// Длина самого длинного цикла
 
 	// Ввод из файла
 	if (INPUT_FROM == INPUT::FILE) {
@@ -69,8 +124,6 @@ int main(){
 
 	// Выделяем достаточно место для вершин и ребер графа
 	graph.resize(n);
-	path.resize(n + 1);
-	path[n] = path[0] = 1;
 	for (int i = 0; i < n; i++) {
 		graph[i].u = i;
 		graph[i].edges.resize(n);
@@ -111,49 +164,17 @@ int main(){
 		}
 	}
 
-	// Нахождение самого длинного простого цикла в полном графе это NP-полная задача
-	// Перебираем все возможные циклы и находим самый длинный
-	// Мы хотим прийти из стартовой (пусть будет первой) вершины в нее же,
-	// поэтому ограничиваем перебор остальными вершинами
-	do {
-		NUM_PERMUTATIONS++;
-		NUM_ACCESSES += 2;
+	// Находим самый длинный простой цикл и его длину
+	auto t1 = high_resolution_clock::now();
+	auto cycle = getLongestCycle(graph, n);
+	auto t2 = high_resolution_clock::now();
 
-		// Длина от стартовой вершины до следующей за ней (текущей)
-		int v = graph[1].u;
-		int length = graph[0].edges[v];
-		
-		// Длина от текущей до следующей
-		for (int u = 1; u < n - 1; u++) {
-			NUM_ACCESSES++;
-			v = graph[u + 1].u;
-			length += graph[u].edges[v];
-		}
-
-		// Длина от последней до стартовой
-		v = 0;
-		length += graph[n - 1].edges[v];
-
-		// Нашли более длинный?
-		if (length > maxLength) {
-			maxLength = length;
-			for (int i = 1; i < n; i++) {
-				path[i] = graph[i].u + 1;
-			}
-		}
-	} while (
-		next_permutation(
-			graph.begin() + 1, 
-			graph.end(), 
-			[](Node a, Node b) {
-				return a.u < b.u;
-			}
-		)
-	);
+	maxLength = cycle.first;
+	path = cycle.second;
 
 	// Выводим статистику
 	cout << (DIRECTED_GRAPH ? "Directed" : "Undirected") << " graph with " << n << " nodes and " << (DIRECTED_GRAPH ? n * (n - 1) : n * (n - 1) / 2) << " edges" << endl;
-	cout << "Required " << NUM_PERMUTATIONS << " permutations and ~" << NUM_ACCESSES << " accesses" << endl;
+	cout << "Required " << NUM_PERMUTATIONS << " permutations, ~" << NUM_ACCESSES << " accesses and " << duration_cast<milliseconds>(t2 - t1).count() << "ms" << endl;
 
 	// Выводим самый длинный цикл
 	cout << "Longest simple cycle (" << maxLength << "): ";
