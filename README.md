@@ -13,7 +13,7 @@
 - [x] [Lab2](https://github.com/unshame/VSRepos/tree/master/DATA/Lab2-BinaryTrees)    
 - [x] [Lab3](https://github.com/unshame/VSRepos/tree/master/DATA/Lab3-Sorting)    
 - [x] [Lab4](https://github.com/unshame/VSRepos/tree/master/DATA/Lab4-Hashing)    
-- [ ] [Lab5](https://github.com/unshame/VSRepos/tree/master/DATA/Lab5-Combinatorics)    
+- [x] [Lab5](https://github.com/unshame/VSRepos/tree/master/DATA/Lab5-Combinatorics)    
 - [ ] [Lab6](https://github.com/unshame/VSRepos/tree/master/DATA/Lab6-Heuristics)    
 
 ## ОС  
