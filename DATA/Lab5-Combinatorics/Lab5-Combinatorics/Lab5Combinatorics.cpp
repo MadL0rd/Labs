@@ -1,4 +1,4 @@
-﻿/*
+/*
 * Находит самый длинный простой цикл в полном направленном или ненаправленном графе методом полного перебора.
 */
 
@@ -52,11 +52,13 @@ int getRandomBetween(int min, int max) {
 // Перебираем все возможные циклы и находим самый длинный
 // Мы хотим прийти из стартовой (пусть будет первой) вершины в нее же,
 // поэтому ограничиваем перебор остальными вершинами (не обязательно всеми)
-pair<int, vector<int>> getLongestCycle(vector<Node> graph, int n) {
+pair<int, vector<int>> getLongestCycle(vector<Node> origGraph, int origGraphSize) {
 	int maxLength = 0;
 	vector<int> path;
-	while (graph.size() >= 2) {
-		do {
+	do {
+		auto graph = origGraph;
+		int n = origGraphSize;
+		while (graph.size() >= 3) {
 			NUM_PERMUTATIONS++;
 			NUM_ACCESSES += 2;
 
@@ -84,18 +86,18 @@ pair<int, vector<int>> getLongestCycle(vector<Node> graph, int n) {
 					path[i] = graph[i].u + 1;
 				}
 			}
-		} while (
-			next_permutation(
-				graph.begin() + 1,
-				graph.end(),
-				[](Node a, Node b) {
-					return a.u < b.u;
-				}
-			)
-		);
-		graph.pop_back();
-		n--;
-	}
+			graph.pop_back();
+			n--;
+		}
+	} while (
+		next_permutation(
+			origGraph.begin() + 1,
+			origGraph.end(),
+			[](Node a, Node b) {
+				return a.u < b.u;
+			}
+		)
+	);
 	return { maxLength, path };
 }
 
@@ -113,8 +115,8 @@ int main(){
 	}
 
 	// Вводим кол-во вершин
-	while (n <= 1) {
-		cout << "Enter number of nodes in graph (n > 1): ";
+	while (n < 3) {
+		cout << "Enter number of nodes in graph (n > 2): ";
 		cin >> n;
 	};
 	if (INPUT_FROM == INPUT::FILE) {
