@@ -34,7 +34,7 @@ int NUM_ACCESSES = 0;
 // Структура вершины
 struct Node {
 	int u;	// Номер вершины
-	vector<int> edges; // Длины ребер
+	vector<pair<int, bool>> edges; // Длины ребер
 };
 
 // Возвращает случайное число между мин и макс
@@ -52,47 +52,46 @@ int getRandomBetween(int min, int max) {
 // Перебираем все возможные циклы и находим самый длинный
 // Мы хотим прийти из стартовой (пусть будет первой) вершины в нее же,
 // поэтому ограничиваем перебор остальными вершинами (не обязательно всеми)
-pair<int, vector<int>> getLongestCycle(vector<Node> origGraph, int origGraphSize) {
+pair<int, vector<int>> getLongestCycle(vector<Node>& graph, int n) {
 	int maxLength = 0;
 	vector<int> path;
 	do {
-		auto graph = origGraph;
-		int n = origGraphSize;
-		while (graph.size() >= 3) {
-			NUM_PERMUTATIONS++;
-			NUM_ACCESSES += 2;
+		NUM_PERMUTATIONS++;
+		NUM_ACCESSES += 2;
 
-			// Длина от стартовой вершины до следующей за ней (текущей)
-			int v = graph[1].u;
-			int length = graph[0].edges[v];
+		// Длина от стартовой вершины до следующей за ней (текущей)
+		int u = 0;
+		int v = graph[1].u;
+		int length = graph[u].edges[v].first;
+		graph[u].edges[v].second = true;
 
-			// Длина от текущей до следующей
-			for (int u = 1; u < n - 1; u++) {
-				NUM_ACCESSES++;
-				v = graph[u + 1].u;
-				length += graph[u].edges[v];
+		// Длина от текущей до следующей
+		for (u = 1; u < n - 1; u++) {
+			NUM_ACCESSES++;
+			v = graph[u + 1].u;
+			length += graph[u].edges[v].first;
+			graph[u].edges[v].second = true;
+		}
+
+		// Длина от последней до стартовой
+		u = n - 1;
+		v = 0;
+		length += graph[u].edges[v].first;
+		graph[u].edges[v].second = true;
+
+		// Нашли более длинный?
+		if (length > maxLength) {
+			maxLength = length;
+			path.resize(n + 1);
+			path[n] = path[0] = 1;
+			for (int i = 1; i < n; i++) {
+				path[i] = graph[i].u + 1;
 			}
-
-			// Длина от последней до стартовой
-			v = 0;
-			length += graph[n - 1].edges[v];
-
-			// Нашли более длинный?
-			if (length > maxLength) {
-				maxLength = length;
-				path.resize(n + 1);
-				path[n] = path[0] = 1;
-				for (int i = 1; i < n; i++) {
-					path[i] = graph[i].u + 1;
-				}
-			}
-			graph.pop_back();
-			n--;
 		}
 	} while (
 		next_permutation(
-			origGraph.begin() + 1,
-			origGraph.end(),
+			graph.begin() + 1,
+			graph.end(),
 			[](Node a, Node b) {
 				return a.u < b.u;
 			}
@@ -158,10 +157,10 @@ int main(){
 			// Мы представляем неориентированный граф как ориентированный в котором
 			// равны длины противоположных ребер
 			if (DIRECTED_GRAPH) {
-				graph[u].edges[v] = weight;
+				graph[u].edges[v].first = weight;
 			}
 			else {
-				graph[u].edges[v] = graph[v].edges[u] = weight;
+				graph[u].edges[v].first = graph[v].edges[u].first = weight;
 			}
 		}
 	}
