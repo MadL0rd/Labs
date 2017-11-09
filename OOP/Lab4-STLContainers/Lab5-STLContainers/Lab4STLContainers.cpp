@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <map>
 #include <vector>
 #include <string>
@@ -109,10 +109,6 @@ public:
 class DBVector : public DBBase {
 private:
 	DBVectorCont db;
-
-	bool cmp(const CompCenter& a, const CompCenter& b) {
-		return a.year > b.year;
-	}
 
 public:
 	void read(string filename) {
