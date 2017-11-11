@@ -22,16 +22,13 @@ enum class INPUT {
 
 vector<string> INPUT_STRING = { "from console", "from input.txt", "random" };
 
-const bool ENABLE_OUTPUT = false;
-const INPUT INPUT_FROM = INPUT::RANDOM; // Сбособ ввода ребер
-const INPUT TEST_INPUT_FROM = INPUT::CONSOLE;
-const INPUT OUTPUT_TO = INPUT::CONSOLE;
-const bool DIRECTED_GRAPH = false;	    // Ребра ориентированные?
+const INPUT INPUT_FROM = INPUT::RANDOM;			// Сбособ ввода ребер
+const INPUT TEST_INPUT_FROM = INPUT::CONSOLE;	// Способ ввода настроек тестов
+const INPUT OUTPUT_TO = INPUT::CONSOLE;			// Способ вывода
+const bool DIRECTED_GRAPH = false;				// Ребра ориентированные?
 
 const int MAX_RANDOM = 100;
 const int MIN_RANDOM = 1;
-
-int BETTER = 0;
 
 struct Edge {
 	int v;
@@ -42,9 +39,9 @@ struct Edge {
 struct Node {
 	int u;	// Номер вершины
 	vector<Edge> edges; // Длины ребер
-	int i;
 };
 
+// Информация о цикле
 struct Cycle {
 	int length;
 	int numAccesses;
@@ -63,6 +60,7 @@ int getRandomBetween(int min, int max) {
 	return min + x % n;
 }
 
+// Возвращает один из длинных циклов
 Cycle estimateLongestCycle(vector<Node> graph, int n) {
 	int NUM_PERMUTATIONS = 0;
 	int NUM_ACCESSES = 0;
@@ -70,11 +68,12 @@ Cycle estimateLongestCycle(vector<Node> graph, int n) {
 	int maxLength = 0;
 	vector<int> path;
 
-	vector<int> backWeights;
+	vector<int> backWeights; // Длины ребер, идущих в вершину начала цикла
 
 	int maxWeight = INT_MIN;
 	int from;
 
+	// Начинаем с самого длинного ребра
 	for (int u = 0; u < n; u++) {
 		for (int v = 0; v < graph[u].edges.size(); v++) {
 			if (u == v) continue;
@@ -88,16 +87,20 @@ Cycle estimateLongestCycle(vector<Node> graph, int n) {
 		}
 	}
 
+	// Добавляем первую вершину в путь
 	path.push_back(from);
+	// Запоминаем длины ребер, идущих в первую вершину
 	for (int u = 0; u < n; u++) {
 		backWeights.push_back(graph[u].edges[from].weight);
 	}
 
+	// Находим цикл, удаляя используемые вершины из графа
 	while (graph.size() > 1) {
 
 		int maxWeight = INT_MIN;
 		int to;
 
+		// Находим самое длинное ребро из текущей вершины
 		for (int i = 0; i < graph[from].edges.size(); i++) {
 			if (from == i) continue;
 
@@ -109,10 +112,13 @@ Cycle estimateLongestCycle(vector<Node> graph, int n) {
 			}
 		}
 
+		// Идем по нему
 		maxLength += maxWeight;
 		path.push_back(to);
 
 		NUM_ACCESSES++;
+
+		// Удаляем вершину из которой мы идем и все ведущие в нее ребра
 		graph.erase(graph.begin() + from);
 
 		for (int i = 0; i < graph.size(); i++) {
@@ -120,23 +126,26 @@ Cycle estimateLongestCycle(vector<Node> graph, int n) {
 			graph[i].edges.erase(graph[i].edges.begin() + from);
 		}		
 
+		// Находим индекс вершины, в которую мы пришли в измененном графе
 		for (int i = 0; i < graph.size(); i++) {
 			NUM_ACCESSES++;
 			if (graph[i].u == to) {
 				from = i;
 				break;
 			}
-		}
-		
+		}		
 	}
 
 	NUM_ACCESSES++;
+	
+	// Завершаем цикл
 	maxLength += backWeights[graph[0].u];
 	path.push_back(path[0]);
 	
 	return { maxLength, NUM_ACCESSES, NUM_PERMUTATIONS, path };
 }
 
+// Возвращает самый длинный цикл
 Cycle getLongestCycle(vector<Node> graph, int n) {
 	int NUM_PERMUTATIONS = 0;
 	int NUM_ACCESSES = 0;
@@ -185,6 +194,7 @@ Cycle getLongestCycle(vector<Node> graph, int n) {
 	return { maxLength, NUM_ACCESSES, NUM_PERMUTATIONS, path };
 }
 
+// Выводит статистику цикла
 void outputResults(int n, Cycle cycle, long long int duration) {
 	// Выводим статистику
 	cout << (DIRECTED_GRAPH ? "Directed" : "Undirected") << " graph with " << n << " nodes and " << (DIRECTED_GRAPH ? n * (n - 1) : n * (n - 1) / 2) << " edges" << endl;
@@ -198,6 +208,7 @@ void outputResults(int n, Cycle cycle, long long int duration) {
 	cout << endl;
 }
 
+// Вводит граф и находит длинный цикл в нем разными способами, после чего выводит статистику и сравнения
 bool runTest(int n, bool enableOutput, bool enableComparison) {
 	vector<Node> graph;	// Граф
 	vector<int> path;	// Самый длинный цикл
@@ -250,28 +261,36 @@ bool runTest(int n, bool enableOutput, bool enableComparison) {
 		}
 	}
 
+	// Один из длинных циклов
 	auto estimatedTime1 = high_resolution_clock::now();
 	auto estimatedCycle = estimateLongestCycle(graph, n);
 	auto estimatedTime2 = high_resolution_clock::now();
 
 	bool matched = false;
+
+	// Копируем, чтобы можно было использовать auto (лень одолела)
 	auto exactTime1 = estimatedTime1;
 	auto exactTime2 = estimatedTime1;
 	auto exactCycle = estimatedCycle;
 	if (enableComparison) {
+
+		// Самый длинный цикл
 		exactTime1 = high_resolution_clock::now();
 		exactCycle = getLongestCycle(graph, n);
 		exactTime2 = high_resolution_clock::now();
 
+		// Такого не должно быть
 		if (estimatedCycle.length > exactCycle.length) {
 			throw(logic_error("Estimated was better than exact"));
 		}
 
+		// Примерный совпал с самым длинным?
 		matched = (estimatedCycle.length == exactCycle.length);
 
 		cout << "(" << exactCycle.length << " <-> " << estimatedCycle.length << ")" << endl;
 	}
 
+	// Выводим результаты
 	if (enableOutput) {
 		if (enableComparison) {
 			cout << (matched ? "Matched" : "Worse") << endl << endl;
@@ -286,6 +305,7 @@ bool runTest(int n, bool enableOutput, bool enableComparison) {
 	return matched;
 }
 
+// Сравнение полного перебора с жадным алгоритмом
 void runCompareTest(int m, int n) {
 	int results = 0;
 	for (int i = 0; i < m; i++) {
@@ -296,6 +316,7 @@ void runCompareTest(int m, int n) {
 	cout << "Estimated matched exact in " << (double(results) / double(m) * 100) << "% of the tests (" << results << "/" << m << ")" << endl;
 }
 
+// Тестирование жадного алгоритма
 void runSpeedTest(int n) {
 	runTest(n, true, false);
 }
@@ -314,8 +335,8 @@ int main() {
 	cout << "Input is " << INPUT_STRING[static_cast<typename underlying_type<INPUT>::type>(INPUT_FROM)] << endl;
 	cout << "Test input is " << INPUT_STRING[static_cast<typename underlying_type<INPUT>::type>(TEST_INPUT_FROM)] << endl << endl;
 
+	// Сравнение полного перебора с жадным алгоритмом
 	cout << "Comparing estimated vs exact results" << endl;
-
 	int m = 0, n = 0;
 	while (true) {
 		cout << "Enter number of tests (m > 0): ";
@@ -333,6 +354,7 @@ int main() {
 		runCompareTest(m, n);
 	}
 
+	// Тестирование жадного алгоритма
 	cout << "Speed test" << endl;
 	n = 0;
 	while (true) {
