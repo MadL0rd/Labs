@@ -1,4 +1,4 @@
-﻿/*
+/*
 * Находит самый длинный простой цикл в полном направленном или ненаправленном графе методом полного перебора.
 */
 
@@ -24,8 +24,8 @@ vector<string> INPUT_STRING = { "from console", "from input.txt", "random" };
 
 const bool ENABLE_OUTPUT = false;
 const INPUT INPUT_FROM = INPUT::RANDOM; // Сбособ ввода ребер
-const INPUT TEST_INPUT_FROM = INPUT::FILE;
-const INPUT OUTPUT_TO = INPUT::FILE;
+const INPUT TEST_INPUT_FROM = INPUT::CONSOLE;
+const INPUT OUTPUT_TO = INPUT::CONSOLE;
 const bool DIRECTED_GRAPH = false;	    // Ребра ориентированные?
 
 const int MAX_RANDOM = 100;
