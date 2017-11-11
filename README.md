@@ -14,7 +14,7 @@
 - [x] [Lab3](https://github.com/unshame/VSRepos/tree/master/DATA/Lab3-Sorting)    
 - [x] [Lab4](https://github.com/unshame/VSRepos/tree/master/DATA/Lab4-Hashing)    
 - [x] [Lab5](https://github.com/unshame/VSRepos/tree/master/DATA/Lab5-Combinatorics)    
-- [ ] [Lab6](https://github.com/unshame/VSRepos/tree/master/DATA/Lab6-Heuristics)    
+- [x] [Lab6](https://github.com/unshame/VSRepos/tree/master/DATA/Lab6-Heuristics)    
 
 ## ОС  
 
