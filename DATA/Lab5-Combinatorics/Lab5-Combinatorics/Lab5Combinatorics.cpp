@@ -22,7 +22,7 @@ enum class INPUT {
 
 vector<string> INPUT_STRING = { "from console", "from input.txt", "random" };
 
-const INPUT INPUT_FROM = INPUT::RANDOM; // Сбособ ввода ребер
+const INPUT INPUT_FROM = INPUT::CONSOLE; // Сбособ ввода ребер
 const bool DIRECTED_GRAPH = false;	    // Ребра ориентированные?
 
 const int MAX_RANDOM = 100;

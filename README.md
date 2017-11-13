@@ -12,9 +12,9 @@
 - [x] [Lab1](https://github.com/unshame/VSRepos/tree/master/DATA/Lab1-Lists) - сдана  
 - [x] [Lab2](https://github.com/unshame/VSRepos/tree/master/DATA/Lab2-BinaryTrees) - сдана  
 - [x] [Lab3](https://github.com/unshame/VSRepos/tree/master/DATA/Lab3-Sorting) - сдана  
-- [x] [Lab4](https://github.com/unshame/VSRepos/tree/master/DATA/Lab4-Hashing)    
-- [x] [Lab5](https://github.com/unshame/VSRepos/tree/master/DATA/Lab5-Combinatorics)    
-- [x] [Lab6](https://github.com/unshame/VSRepos/tree/master/DATA/Lab6-Heuristics)    
+- [x] [Lab4](https://github.com/unshame/VSRepos/tree/master/DATA/Lab4-Hashing) - сдана      
+- [x] [Lab5](https://github.com/unshame/VSRepos/tree/master/DATA/Lab5-Combinatorics) - сдана      
+- [x] [Lab6](https://github.com/unshame/VSRepos/tree/master/DATA/Lab6-Heuristics) - сдана      
 
 ## ОС  
 
