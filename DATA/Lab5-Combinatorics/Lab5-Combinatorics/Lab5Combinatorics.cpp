@@ -22,8 +22,8 @@ enum class INPUT {
 
 vector<string> INPUT_STRING = { "from console", "from input.txt", "random" };
 
-const INPUT INPUT_FROM = INPUT::CONSOLE; // Сбособ ввода ребер
-const bool DIRECTED_GRAPH = false;	    // Ребра ориентированные?
+const INPUT INPUT_FROM = INPUT::FILE; // Сбособ ввода ребер
+const bool DIRECTED_GRAPH = true;	    // Ребра ориентированные?
 
 const int MAX_RANDOM = 100;
 const int MIN_RANDOM = 1;
@@ -53,7 +53,7 @@ int getRandomBetween(int min, int max) {
 // Мы хотим прийти из стартовой (пусть будет первой) вершины в нее же,
 // поэтому ограничиваем перебор остальными вершинами (не обязательно всеми)
 pair<int, vector<int>> getLongestCycle(vector<Node>& graph, int n) {
-	int maxLength = 0;
+	int maxLength = 0x3f3f3f;
 	vector<int> path;
 	do {
 		NUM_PERMUTATIONS++;
@@ -80,7 +80,7 @@ pair<int, vector<int>> getLongestCycle(vector<Node>& graph, int n) {
 		graph[u].edges[v].second = true;
 
 		// Нашли более длинный?
-		if (length > maxLength) {
+		if (length < maxLength) {
 			maxLength = length;
 			path.resize(n + 1);
 			path[n] = path[0] = 1;
