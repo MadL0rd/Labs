@@ -21,6 +21,6 @@
 - [x] [Lab1](https://github.com/unshame/VSRepos/tree/master/OS/Lab1-Spy++) - сдана  
 - [x] [Lab2](https://github.com/unshame/VSRepos/tree/master/OS/Lab2-BatchFiles) - сдана     
 - [x] [Lab3](https://github.com/unshame/VSRepos/tree/master/OS/Lab3-Bash) - сдана     
-- [x] [Lab4](https://github.com/unshame/VSRepos/tree/master/OS/Lab4-Threads1)    
-- [x] [Lab5](https://github.com/unshame/VSRepos/tree/master/OS/Lab5-Threads2)    
+- [x] [Lab4](https://github.com/unshame/VSRepos/tree/master/OS/Lab4-Threads1) - сдана        
+- [x] [Lab5](https://github.com/unshame/VSRepos/tree/master/OS/Lab5-Threads2) - сдана        
 - [x] [Lab6](https://github.com/unshame/VSRepos/tree/master/OS/Lab6-SystemMonitoring) - сдана     
