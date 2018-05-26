@@ -11,7 +11,8 @@ namespace Lab1 {
     public class Program {
 
         public static StreamWriter output = new StreamWriter("output.txt");
-        public static string statsHeader = "Avg. Runtime; Defragged; Queued; Avg. Timeloss";
+        public static StreamWriter generatedInput = new StreamWriter("generated-input.txt");
+        public static string statsHeader = "Avg. Runtime; Defragged; Queued; Avg. Timeloss; Iterations";
 
         static Random rnd = new Random();
 
@@ -40,6 +41,7 @@ namespace Lab1 {
                     opts.LifespanMin,
                     opts.LifespanMax
                 );
+                generatedInput.WriteLine(input);
             }
             else {
                 input = File.ReadAllText(opts.FileName);
@@ -57,12 +59,13 @@ namespace Lab1 {
             for(int i = 0; i < fitters.Length; i++) {
                 RunManager(
                     opts.MemoryLimit == null ? 1024 : opts.MemoryLimit.Value,
-                    opts.DefragTime == null ? 2 : opts.DefragTime.Value,
+                    opts.DefragTime == null ? 10 : opts.DefragTime.Value,
                     fitters[i], input, opts.Interval, opts.DebugMode
                 );
             }
 
             output.Close();
+            generatedInput.Close();
         }
 
         internal class Options {
@@ -470,8 +473,8 @@ namespace Lab1 {
 
             var file = new StreamWriter("Log-" + fitter.name + ".txt");
             file.WriteLine(" Id; Queued; Started; Finished; Defrag");
-            int runtime = 0;
-            int timeLoss = 0;
+            float runtime = 0;
+            float timeLoss = 0;
 
             finishedProcesses.ForEach(process => {
                 file.WriteLine("{0, 3}; {1, 6}; {2, 7}; {3, 8}; {4, 6}", process.id, process.queueTime, process.startTime, process.finishTime, process.defragged);
@@ -480,7 +483,14 @@ namespace Lab1 {
             });
 
             file.Close();
-            var stats = String.Format("{0, 12}; {1, 9}; {2, 6}; {3, 13}", runtime / finishedProcesses.Count, statDefragged, statQueued, timeLoss / finishedProcesses.Count);
+            var stats = String.Format(
+                "{0, 12}; {1, 9}; {2, 6}; {3, 13}; {4, 10}",
+                runtime / finishedProcesses.Count,
+                statDefragged,
+                statQueued,
+                timeLoss / finishedProcesses.Count,
+                fitter.iterations
+            );
             Program.output.WriteLine("{1, 8}; {0}", stats, fitter.name);
 
             Console.WriteLine("Finished memory manager with {0} fitter and {1} processes in {2} ticks", fitter.name, processesTotal, currentTime);
@@ -495,9 +505,9 @@ namespace Lab1 {
 
     public abstract class MemoryFitter {
         public string name;
+        public int iterations = 0;
 
-        public abstract int? Fit(Process process, int[] memory);
-        
+        public abstract int? Fit(Process process, int[] memory);        
     }
 
     public class FirstFit : MemoryFitter {
@@ -510,9 +520,11 @@ namespace Lab1 {
 
             int memoryAddress = 0;
             int memoryAvailable = 0;
-            for (int i = 0; i < memory.Length; i++) {
 
-                if(memory[i] != 0) {
+            for (int i = 0; i < memory.Length; i++) {
+                iterations++;
+
+                if (memory[i] != 0) {
                     memoryAvailable = 0;
                     memoryAddress = i + 1;
                     continue;
@@ -544,7 +556,9 @@ namespace Lab1 {
             int memoryAddress = startingPoint;
             int memoryAvailable = 0;
             bool looped = false;
+
             while (true) {
+                iterations++;
 
                 if (memory[i] != 0) {
                     memoryAvailable = 0;
@@ -593,6 +607,7 @@ namespace Lab1 {
             int bestMemoryAvailable = 0;
 
             for (int i = 0; i <= memory.Length; i++) {
+                iterations++;
 
                 if (i == memory.Length || memory[i] != 0) {
 
