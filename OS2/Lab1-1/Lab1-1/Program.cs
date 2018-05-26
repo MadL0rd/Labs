@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Diagnostics;
 using CommandLine;
-using CommandLine.Text;
 
 namespace Lab1 {
     public class Program {
 
-        public static StreamWriter output = new StreamWriter("output.txt");
-        public static StreamWriter generatedInput = new StreamWriter("generated-input.txt");
-        public static string statsHeader = "Avg. Runtime; Defragged; Queued; Avg. Timeloss; Iterations";
+        static StreamWriter output;
+        static string statsHeader = "    Avg.; Dev. Runtime; Defragged; Queued;     Avg.; Dev. Timeloss; Iterations";
+        static string summary = "";
 
         static Random rnd = new Random();
 
@@ -30,21 +30,21 @@ namespace Lab1 {
         static void RunProgram(Options opts) {
 
             string input;
+            output = new StreamWriter("output.txt");
 
             if (!opts.ReadFromFile) {
                 input = GetRandomizedProcesses(
                     opts.ProcessAmount,
-                    opts.MemMin,
-                    opts.MemMax,
-                    opts.StartMin,
-                    opts.StartMax,
-                    opts.LifespanMin,
-                    opts.LifespanMax
+                    opts.Mem.ElementAt(0),
+                    opts.Mem.ElementAt(1),
+                    opts.StartTime,
+                    opts.Lifespan.ElementAt(0),
+                    opts.Lifespan.ElementAt(1)
                 );
-                generatedInput.WriteLine(input);
+                File.WriteAllText("generated-input.txt", input);
             }
             else {
-                input = File.ReadAllText(opts.FileName);
+                input = File.ReadAllText(opts.InputFile);
             }
 
             output.WriteLine("          " + statsHeader);
@@ -56,67 +56,46 @@ namespace Lab1 {
                 new NextFit()
             };
 
-            for(int i = 0; i < fitters.Length; i++) {
+            foreach(int i in opts.Fitters) {
+
+                int j = i - 1;
+                if (j < 0 || j >= fitters.Length) continue;
+
                 RunManager(
                     opts.MemoryLimit == null ? 1024 : opts.MemoryLimit.Value,
                     opts.DefragTime == null ? 10 : opts.DefragTime.Value,
-                    fitters[i], input, opts.Interval, opts.DebugMode
+                    fitters[j], input, opts.Interval, opts.DebugMode
                 );
             }
 
+            Console.WriteLine("          " + statsHeader);
+            Console.WriteLine(summary);
+
             output.Close();
-            generatedInput.Close();
-        }
-
-        internal class Options {
-
-            [Value(0, HelpText = "Memory Limit")]
-            public int? MemoryLimit { get; set; }
-
-            [Value(1, HelpText = "Defragmenation Time (in ticks)")]
-            public int? DefragTime { get; set; }
-
-
-            [Option('f', "file", Default = false, HelpText = "Read process info from file")]
-            public bool ReadFromFile { get; set; }
-
-            [Option("filename", Default = "input.txt", HelpText = "File to read process info from")]
-            public string FileName { get; set; }
-
-
-            [Option("procs", Default = 50, HelpText = "Amount of processes")]
-            public int ProcessAmount { get; set; }
-
-            [Option("mem-min", Default = 16, HelpText = "Minimum process memory")]
-            public int MemMin { get; set; }
-
-            [Option("mem-max", Default = 128, HelpText = "Maximum process memory")]
-            public int MemMax { get; set; }
-
-            [Option("start-min", Default = 0, HelpText = "Minimum process start delay")]
-            public int StartMin { get; set; }
-
-            [Option("start-max", Default = 15, HelpText = "Maximum process start delay")]
-            public int StartMax { get; set; }
-
-            [Option("lifespan-min", Default = 4, HelpText = "Minimum process start delay")]
-            public int LifespanMin { get; set; }
-
-            [Option("lifespan-max", Default = 15, HelpText = "Maximum process start memory")]
-            public int LifespanMax { get; set; }
-
-
-            [Option("interval", Default = 0, HelpText = "Time between ticks")]
-            public int Interval { get; set; }
-
-            [Option("debug", Default = 0, HelpText = "Debug mode. 0 - off, 1 - ticks with interval, 2 - manual step through ticks")]
-            public int DebugMode { get; set; }
         }
 
         static void RunManager(int memoryLimit, int defragTime, MemoryFitter fitter, string input, int interval, int debugMode) {
+
             var manager = new MemoryManager(memoryLimit, defragTime, fitter, debugMode);
+
             CreateProcesses(manager, input);
-            manager.Start(interval);
+
+            var stats = manager.Run(interval);
+
+            if (debugMode != 0) {
+                Console.WriteLine(statsHeader);
+                Console.WriteLine(stats);
+            }
+
+            Console.WriteLine();
+
+            stats = String.Format("{1, 8}; {0}", stats, manager.Fitter.name);
+            output.WriteLine(stats);
+            summary += stats + '\n';
+
+            if (debugMode != 0) {
+                Console.ReadKey();
+            }
         }
 
         static void CreateProcesses(MemoryManager manager, string input) {
@@ -134,51 +113,63 @@ namespace Lab1 {
                     int lifespan = Int32.Parse(proc[2]);
                     manager.CreateProcess(mem, possStart, lifespan);
                 }
-                catch {
-                    Console.WriteLine("Couldn't parse line " + i);
+                catch (Exception e) {
+                    Console.WriteLine("Couldn't create process from line {0} '{1}'", i, procs[i]);
+                    Console.WriteLine(e.ToString());
                 }
             }
         }
 
-        static string GetRandomizedProcesses(long amount, int memMin, int memMax, int possibleStartTimeMin, int possibleStartTimeMax, int lifespanMin, int lifespanMax) {
+        static string GetRandomizedProcesses(long amount, int memMin, int memMax, int startTimeMax, int lifespanMin, int lifespanMax) {
             Console.WriteLine("Creating info for {0} random processes", amount);
-            Console.WriteLine("Memory: {0}-{1}, start time: {2}-{3}, lifespan: {4}-{5}\n", memMin, memMax, possibleStartTimeMin, possibleStartTimeMax, lifespanMin, lifespanMax);
+            Console.WriteLine("Memory: {0}-{1}, start time: {2}-{3}, lifespan: {4}-{5}\n", memMin, memMax, 0, startTimeMax, lifespanMin, lifespanMax);
 
-            string input = "";
+            var input = new StringBuilder(); ;
 
             for (int i = 0; i < amount; i++) {
-                input += String.Format("{0} {1} {2}\n", rnd.Next(memMin, memMax), rnd.Next(possibleStartTimeMin, possibleStartTimeMax), rnd.Next(lifespanMin, lifespanMax));
+                input.Append(String.Format("{0} {1} {2}\n", rnd.Next(memMin, memMax + 1), rnd.Next(0, startTimeMax + 1), rnd.Next(lifespanMin, lifespanMax + 1)));
             }
 
-            input = input.Remove(input.Length - 1);
-            return input;
+            input = input.Remove(input.Length - 1, 1);
+            return input.ToString();
         }
     }
 
     public class Process {
 
-        public int memoryReq;
-        public int memoryAddress;
-        public int id;
-        public int queueTime;
-        public int startTime;
-        public int finishTime;
-        public int possibleStartTime;
-        public bool running = false;
-        public int lifespan;
-        public bool defragged;
+        public int Id;
+        public int MemoryReq;
+        public int DesiredStartTime;
+        public int Lifespan;
 
-        public Process(int id, int memoryReq, int possibleStartTime, int lifespan) {
-            this.id = id;
-            this.memoryReq = memoryReq;
-            this.possibleStartTime = possibleStartTime;
-            this.lifespan = lifespan;
+        public int MemoryAddress;
+
+        public int QueueTime;
+        public int StartTime;
+        public int StartTimeWithoutDefrag;
+        public int FinishTime;
+
+        public bool Defragged;
+
+        public bool Running = false;
+
+        public Process(int id, int memoryReq, int desiredStartTime, int lifespan) {
+            Id = id;
+            MemoryReq = memoryReq;
+            DesiredStartTime = desiredStartTime;
+            Lifespan = lifespan;
         }
 
-        public void Start(int memoryAddress, int startTime) {
-            this.startTime = startTime;
-            this.memoryAddress = memoryAddress;
-            running = true;
+        public void Start(int memoryAddress, int startTime, int startTimeWithoutDefrag) {
+            StartTime = startTime;
+            StartTimeWithoutDefrag = startTimeWithoutDefrag;
+            MemoryAddress = memoryAddress;
+            Running = true;
+        }
+
+        public void Finish(int finishTime) {
+            FinishTime = finishTime;
+            Running = false;
         }
     }
 
@@ -186,33 +177,48 @@ namespace Lab1 {
 
         int[] memory;
         int memoryLeft;
-        int processIdCounter = 0;
-        int currentTime = 0;
         int defragTime;
+
+        int currentTime = 0;
+        int currentTimeWithoutDefrag = 0;
+
         int processesTotal = 0;
+        int processIdCounter = 0;
+
+        int statDefragged = 0;
+        int statQueued = 0;
+        int debugMode;
+
+        string stats = "";
 
         List<Process> startedProcesses = new List<Process>();
         List<Process> notStartedProcesses = new List<Process>();
         List<Process> queuedProcesses = new List<Process>();
         List<Process> finishedProcesses = new List<Process>();
 
-        int statDefragged = 0, statQueued = 0;
-        int debugMode;
-
-        MemoryFitter fitter;
+        public MemoryFitter Fitter;
 
         public MemoryManager(int memoryLimit, int defragTime, MemoryFitter fitter, int debugMode) {
             memory = new int[memoryLimit];
             memoryLeft = memoryLimit;
+            Fitter = fitter;
             this.defragTime = defragTime;
-            this.fitter = fitter;
             this.debugMode = debugMode;
         }
 
-        public void Start(int interval) {
-            Console.WriteLine("Started memory manager with {0} fitter", fitter.name);
+        public string Run(int interval) {
+            Console.WriteLine("Started {0}", Fitter.name);
             Console.WriteLine("Memory limit: {0}, defrag time: {1}", memory.Length, defragTime);
+
+            if(debugMode != 0) {
+                VisualizeMemory();
+                if(debugMode == 2) {
+                    Console.ReadKey();
+                }
+            }
+
             while (Update()) {
+
                 if (debugMode == 2) {
                     Console.ReadKey();
                 }
@@ -220,43 +226,49 @@ namespace Lab1 {
                     System.Threading.Thread.Sleep(interval);
                 }
             }
+
+            return stats;
         }
 
         void Stop() {
-            OutputStats();
-            if (debugMode != 0) {
-                Console.ReadKey();
-            }
+            stats = OutputStats();
+            Console.WriteLine("Finished {0} with {1} processes in {2} ticks", Fitter.name, processesTotal, currentTime);
         }
 
         bool Update() {
+
+            if (debugMode != 0) {
+                Console.WriteLine("Tick {0} ({1} not counting defrag)", currentTime, currentTimeWithoutDefrag);
+            }
 
             UpdateStarted();
             UpdateQueue();
             UpdateNotStarted();
 
-            CheckForMemoryOverwrites();
-
             if (debugMode != 0) {
                 VisualizeMemory();
             }
 
+            NormalizeMemory();
 
             if (IsFinished()) {
                 Stop();
                 return false;
             }
 
+            currentTimeWithoutDefrag++;
             currentTime++;
 
             return true;
         }
 
         void UpdateStarted() {
+
             for (int i = 0; i < startedProcesses.Count; i++) {
                 Process process = startedProcesses[i];
 
-                if (process.startTime + process.lifespan == currentTime) {
+                // Останавливаем процесс, если он отработал свое время
+                if (process.StartTimeWithoutDefrag + process.Lifespan == currentTimeWithoutDefrag) {
                     i--;
                     StopAndDestroyProcess(process);
                 }
@@ -265,14 +277,17 @@ namespace Lab1 {
 
         void UpdateQueue() {
 
-            for (int i = 0; i < queuedProcesses.Count; i++) {
-                Process process = queuedProcesses[i];
+            // Пытаемся запустить первый процесс в очереди
+            while(queuedProcesses.Count != 0) {
+                Process process = queuedProcesses[0];
                 int? memoryAddress = AllocateMemory(process);
 
                 if (memoryAddress != null) {
-                    queuedProcesses.RemoveAt(i);
-                    i--;
+                    queuedProcesses.RemoveAt(0);
                     StartProcess(process, memoryAddress.Value);
+                }
+                else {
+                    break;
                 }
             }
         }
@@ -280,19 +295,28 @@ namespace Lab1 {
         void UpdateNotStarted() {
 
             for (int i = 0; i < notStartedProcesses.Count; i++) {
+
                 Process process = notStartedProcesses[i];
 
-                if (process.possibleStartTime > currentTime) continue;
+                // Процесс еще не нужно запускать
+                if (process.DesiredStartTime > currentTime) continue;
 
-                process.queueTime = currentTime;
+                process.QueueTime = currentTime;
 
-                int? memoryAddress = AllocateMemory(process);
-                if (memoryAddress != null) {
-                    StartProcess(process, memoryAddress.Value);
+                // Пытаемся запустить процесс, если очередь пуста
+                bool started = false;
+                if (queuedProcesses.Count == 0) {
+                    int? memoryAddress = AllocateMemory(process);
+
+                    if (memoryAddress != null) {
+                        StartProcess(process, memoryAddress.Value);
+                        started = true;
+                    }
                 }
-                else {
-                    queuedProcesses.Add(process);
-                    statQueued++;
+
+                // Ставим процесс в очередь, если мы его не запустили
+                if (!started) {
+                    QueueUpProcess(process);
                 }
 
                 notStartedProcesses.RemoveAt(i);
@@ -300,39 +324,64 @@ namespace Lab1 {
             }
         }
 
-        void CheckForMemoryOverwrites() {
-            int totalMem = memory.Length;
-            for (int i = 0; i < memory.Length; i++) {
-                if (memory[i] != 0) {
-                    totalMem--;
-                }
-            }
-            if (totalMem != memoryLeft) {
-                Console.WriteLine("{0} != {1}", totalMem, memoryLeft);
-                throw new Exception("Memory overwrite");
-            }
+        // Возвращает true, если все процессы завершены
+        bool IsFinished() {
+            var finished = processesTotal == finishedProcesses.Count;
+            var actuallyFinished = startedProcesses.Count == 0 && notStartedProcesses.Count == 0 && queuedProcesses.Count == 0;
+
+            Debug.Assert(finished == actuallyFinished, "Processes don't add up");
+
+            return finished;
         }
 
 
 
         public Process CreateProcess(int memoryReq, int possibleStartTime, int lifespan) {
+
+            if (memoryReq <= 0) {
+                throw new Exception("Process memory requirement cannot be 0 or less");
+            }
+
+            if (memoryReq > memory.Length) {
+                throw new Exception("Process memory requirement cannot be more than total memory amount");
+            }
+
             var process = new Process(processIdCounter++, memoryReq, possibleStartTime, lifespan);
             notStartedProcesses.Add(process);
             processesTotal++;
             return process;
         }
 
+        void QueueUpProcess(Process process) {
+
+            if (debugMode != 0) {
+                Console.WriteLine("q Process {0} needs {1} cells", process.Id, process.MemoryReq);
+            }
+
+            queuedProcesses.Add(process);
+            statQueued++;
+        }
+
         void StartProcess(Process process, int memoryAddress) {
+
+            if (debugMode != 0) {
+                Console.WriteLine("+ Process {0} took {1} cells on {2}", process.Id, process.MemoryReq, memoryAddress);
+            }
+
             startedProcesses.Add(process);
-            FillMemory(memoryAddress, process.memoryReq, true);
-            process.Start(memoryAddress, currentTime);
+            FillMemory(memoryAddress, process.MemoryReq, true);
+            process.Start(memoryAddress, currentTime, currentTimeWithoutDefrag);
         }
 
         void StopAndDestroyProcess(Process process) {
+
+            if (debugMode != 0) {
+                Console.WriteLine("- Process {0} released {1} cells on {2}", process.Id, process.MemoryReq, process.MemoryAddress);
+            }
             ReleaseMemory(process);
             startedProcesses.Remove(process);
             finishedProcesses.Add(process);
-            process.finishTime = currentTime;
+            process.Finish(currentTime);
         }
 
 
@@ -340,21 +389,19 @@ namespace Lab1 {
         public int? AllocateMemory(Process process) {
 
             // Проверяем хватает ли памяти под процесс
-            if(memoryLeft - process.memoryReq >= 0) {
-                int? memoryAddress = fitter.Fit(process, memory);
+            if(memoryLeft - process.MemoryReq >= 0) {
+                int? memoryAddress = Fitter.Fit(process, memory);
 
                 // Памяти хватает, но фиттер не нашел адрес,
                 // значит нужно дефрагментировать память и попробовать еще раз
                 if(memoryAddress == null) {
                     DefragmentMemory();
-                    process.defragged = true;
-                    memoryAddress = fitter.Fit(process, memory);
+                    process.Defragged = true;
+                    memoryAddress = Fitter.Fit(process, memory);
 
                     // Т.к. мы проверили что памяти хватает,
                     // после дефрагментации фиттер должен найти адрес для процесса
-                    if (memoryAddress == null) {
-                        throw new Exception("Coudln't fit after defrag");
-                    }
+                    Debug.Assert(memoryAddress != null, "Coudln't fit after defrag");
                 }
 
                 return memoryAddress;
@@ -363,83 +410,103 @@ namespace Lab1 {
         }
 
         void ReleaseMemory(Process process) {
-            FillMemory(process.memoryAddress, process.memoryReq, false);
+            FillMemory(process.MemoryAddress, process.MemoryReq, false);
         }
 
         // Заполняет/очищает память, изменяет memoryLeft
         // Кидает ошибки, если значение ячейки уже в переданном состоянии
         void FillMemory(int start, int length, bool value) {
 
+            Debug.Assert(length > 0, "Cannot fill zero or less amount of memory");
+
             for(int n = 0; n < length; n++) {
 
                 if (value) {
-                    if (memory[n + start] == 0) {
-                        memoryLeft--;
-                    }
-                    else {
-                        throw new Exception("Memory overwrite");
-                    }
+                    Debug.Assert(memory[n + start] == 0, "Memory overwrite");
+                    memoryLeft--;
                 }
                 else {
-                    if (memory[n + start] != 0) {
-                        memoryLeft++;
-                    }
-                    else {
-                        throw new Exception("Memory already empty, use ClearMemory()");
-                    }
+                    Debug.Assert(memory[n + start] != 0, "Memory already empty, use ClearMemory()");
+                    memoryLeft++;
                 }
 
-                memory[n + start] = value ? 1 : 0;
+                memory[n + start] = value ? 3 : 0;
             }
 
             // Отмечаем начало части памяти для вывода в консоль
             memory[start] = value ? 2 : 0;
         }
 
-        void ClearMemory() {
+        void NormalizeMemory() {
             for (int i = 0; i < memory.Length; i++) {
-                memory[i] = 0;
+                if (memory[i] == 3) {
+                    memory[i] = 1;
+                }
             }
-            memoryLeft = memory.Length;
+        }
+
+        void CheckForMemoryLeaks() {
+
+            int actualMemoryLeft = 0;
+            for (int i = 0; i < memory.Length; i++) {
+                if (memory[i] == 0) {
+                    actualMemoryLeft++;
+                }
+            }
+
+            Debug.Assert(actualMemoryLeft == memoryLeft, "Memory overwrite");
         }
 
         // Переносит выделенную процессам память в начало
         void DefragmentMemory() {
-            int memoryAddress = 0;
 
-            // Очищаем память
-            // При настоящей дефрагментации мы потеряли бы данные, 
-            // но здесь нам важен лишь факт заполненности ячеек
-            ClearMemory();
+            int j = 0;
+            for(int i = 0; i < memory.Length; i++) {
+                if (memory[i] == 0) {
+                    continue;
+                }
+                else if (j == i) {
+                    j++;
+                }
+                else { 
+                    memory[j] = memory[i];
+                    memory[i] = 0;
+                    j++;
+                }
+
+            }
+
+            CheckForMemoryLeaks();
 
             // Перераспределяем память процессам
+            int memoryAddress = 0;
             startedProcesses.ForEach(process => {
-                process.memoryAddress = memoryAddress;
-                FillMemory(memoryAddress, process.memoryReq, true);
-                memoryAddress += process.memoryReq;
+                process.MemoryAddress = memoryAddress;
+                memoryAddress += process.MemoryReq;
             });
 
             statDefragged++;
+            currentTime += defragTime;
 
             if (debugMode != 0) {
-                Console.WriteLine("Defragmentated");
+                Console.WriteLine("Defragmentated (skipped to tick {0})", currentTime);
             }
         }
 
-        bool IsFinished() {
-            return startedProcesses.Count == 0 && notStartedProcesses.Count == 0 && queuedProcesses.Count == 0;
-        }
-
+        // Вывод памяти в консоль
         void VisualizeMemory() {
             int width = 64;
             int row = 0;
             int d = width;
+
             for(int i = 0; i < memory.Length; i++) {
+
                 if (d == width) {
                     Console.Write("\n{0, 4} ", row);
                     row += width;
                     d = 0;
                 }
+
                 char mem;
                 switch(memory[i]) {
                     case 0:
@@ -448,10 +515,14 @@ namespace Lab1 {
                     case 2:
                         mem = '!';
                         break;
+                    case 3:
+                        mem = '+';
+                        break;
                     default:
                         mem = '■';
                         break;
                 }
+
                 Console.Write(mem);
                 d++;
             }
@@ -468,35 +539,46 @@ namespace Lab1 {
             Console.WriteLine();
         }
 
-        void OutputStats() {
+        // Вывод статистики в консоль и файл
+        string OutputStats() {
 
+            var file = new StreamWriter("Log-" + Fitter.name + ".txt");
+            file.WriteLine("  Id; Desired; Queued; Started; Finished; Defrag");
 
-            var file = new StreamWriter("Log-" + fitter.name + ".txt");
-            file.WriteLine(" Id; Queued; Started; Finished; Defrag");
-            float runtime = 0;
-            float timeLoss = 0;
+            int numProcesses = finishedProcesses.Count;
+            double runtime = 0;
+            double timeLoss = 0;
+
 
             finishedProcesses.ForEach(process => {
-                file.WriteLine("{0, 3}; {1, 6}; {2, 7}; {3, 8}; {4, 6}", process.id, process.queueTime, process.startTime, process.finishTime, process.defragged);
-                runtime += process.finishTime - process.possibleStartTime;
-                timeLoss += process.startTime - process.possibleStartTime + (process.defragged ? defragTime : 0);
+                file.WriteLine("{0, 4}; {1, 7}; {2, 6}; {3, 7}; {4, 8}; {5, 6}", process.Id, process.DesiredStartTime, process.QueueTime, process.StartTime, process.FinishTime, process.Defragged);
+                runtime += process.FinishTime - process.DesiredStartTime;
+                timeLoss += process.StartTime - process.DesiredStartTime;
+            });
+            file.Close();
+
+            double runtimeDeviationComponent = 0;
+            double timeLossDeviationComponent = 0;
+            double runtimeAvg = runtime / numProcesses;
+            double timeLossAvg = timeLoss / numProcesses;
+            finishedProcesses.ForEach(process => {
+                runtimeDeviationComponent += Math.Pow(process.FinishTime - process.DesiredStartTime - runtimeAvg, 2);
+                timeLossDeviationComponent += Math.Pow(process.StartTime - process.DesiredStartTime - timeLossAvg, 2);
             });
 
-            file.Close();
-            var stats = String.Format(
-                "{0, 12}; {1, 9}; {2, 6}; {3, 13}; {4, 10}",
-                runtime / finishedProcesses.Count,
+            var runtimeDeviation = Math.Sqrt(runtimeDeviationComponent / numProcesses);
+            var timeLossDeviation = Math.Sqrt(timeLossDeviationComponent / numProcesses);
+
+            return String.Format(
+                "{0, 8}; {1, 12}; {2, 9}; {3, 6}; {4, 8}; {5, 13}; {6, 10}",
+                runtimeAvg.ToString("#.##"),
+                runtimeDeviation.ToString("#.##"),
                 statDefragged,
                 statQueued,
-                timeLoss / finishedProcesses.Count,
-                fitter.iterations
+                timeLossAvg.ToString("#.##"),
+                timeLossDeviation.ToString("#.##"),
+                Fitter.iterations
             );
-            Program.output.WriteLine("{1, 8}; {0}", stats, fitter.name);
-
-            Console.WriteLine("Finished memory manager with {0} fitter and {1} processes in {2} ticks", fitter.name, processesTotal, currentTime);
-            Console.WriteLine(Program.statsHeader);
-            Console.WriteLine(stats);
-            Console.WriteLine();
         }
     }
 
@@ -532,7 +614,7 @@ namespace Lab1 {
 
                 memoryAvailable++;
 
-                if(memoryAvailable == process.memoryReq) {
+                if(memoryAvailable == process.MemoryReq) {
                     return memoryAddress;
                 }
             }
@@ -568,7 +650,7 @@ namespace Lab1 {
 
                     memoryAvailable++;
 
-                    if (memoryAvailable == process.memoryReq) {
+                    if (memoryAvailable == process.MemoryReq) {
                         lastAddress = (i + 1) == memory.Length ? 0 : i + 1;
                         return memoryAddress;
                     }
@@ -611,7 +693,7 @@ namespace Lab1 {
 
                 if (i == memory.Length || memory[i] != 0) {
 
-                    if(memoryAvailable >= process.memoryReq && (bestMemoryAddress == null || CheckFit(memoryAvailable, bestMemoryAvailable))) {
+                    if(memoryAvailable >= process.MemoryReq && (bestMemoryAddress == null || CheckFit(memoryAvailable, bestMemoryAvailable))) {
                         bestMemoryAddress = memoryAddress;
                         bestMemoryAvailable = memoryAvailable;
                     }
@@ -641,5 +723,48 @@ namespace Lab1 {
         protected override bool CheckFit(int newFit, int oldFit) {
             return newFit > oldFit;
         }
+    }
+
+    internal class Options {
+
+        [Value(0, HelpText = "Memory Limit")]
+        public int? MemoryLimit { get; set; }
+
+        [Value(1, HelpText = "Defragmenation Time (in ticks)")]
+        public int? DefragTime { get; set; }
+
+
+        [Option("fitters", Default = new int[] { 1, 2, 3, 4 }, HelpText = "Memory fit algorithms. 1 - BestFit, 2 - WorstFit, 3 - FirstFit, 4 - NextFit")]
+        public IEnumerable<int> Fitters { get; set; }
+
+
+        [Option('f', Default = false, HelpText = "Read process info from file")]
+        public bool ReadFromFile { get; set; }
+
+        [Option("input", Default = "input.txt", HelpText = "File to read process info from")]
+        public string InputFile { get; set; }
+
+        [Option("output", Default = "output.txt", HelpText = "File to write stats to")]
+        public string OutputFile { get; set; }
+
+
+        [Option("procs", Default = 100, HelpText = "Amount of processes")]
+        public int ProcessAmount { get; set; }
+
+        [Option("mem", Default = new int[] { 8, 32 }, HelpText = "Process memory range")]
+        public IEnumerable<int> Mem { get; set; }
+
+        [Option("start", Default = 15, HelpText = "Maximum process start delay")]
+        public int StartTime { get; set; }
+
+        [Option("lifespan", Default = new int[] { 4, 15 }, HelpText = "Process start delay range")]
+        public IEnumerable<int> Lifespan { get; set; }
+
+
+        [Option("interval", Default = 0, HelpText = "Time between ticks")]
+        public int Interval { get; set; }
+
+        [Option("debug", Default = 0, HelpText = "Debug mode. 0 - off, 1 - ticks with interval, 2 - manual step through ticks")]
+        public int DebugMode { get; set; }
     }
 }
