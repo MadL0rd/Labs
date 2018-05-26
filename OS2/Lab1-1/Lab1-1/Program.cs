@@ -7,7 +7,7 @@ using System.IO;
 using CommandLine;
 using CommandLine.Text;
 
-namespace Lab1_1 {
+namespace Lab1 {
     public class Program {
 
         public static StreamWriter output = new StreamWriter("output.txt");
