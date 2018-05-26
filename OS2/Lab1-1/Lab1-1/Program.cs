@@ -93,7 +93,7 @@ namespace Lab1 {
             output.WriteLine(stats);
             summary += stats + '\n';
 
-            if (debugMode != 0) {
+            if (debugMode == 3) {
                 Console.ReadKey();
             }
         }
@@ -212,17 +212,17 @@ namespace Lab1 {
 
             if(debugMode != 0) {
                 VisualizeMemory();
-                if(debugMode == 2) {
+                if(debugMode == 3) {
                     Console.ReadKey();
                 }
             }
 
             while (Update()) {
 
-                if (debugMode == 2) {
+                if (debugMode == 3) {
                     Console.ReadKey();
                 }
-                else if(debugMode == 1) {
+                else if(debugMode == 2) {
                     System.Threading.Thread.Sleep(interval);
                 }
             }
@@ -760,10 +760,10 @@ namespace Lab1 {
         public IEnumerable<int> Lifespan { get; set; }
 
 
-        [Option("interval", Default = 0, HelpText = "Time between ticks")]
+        [Option("interval", Default = 1000, HelpText = "Time between ticks")]
         public int Interval { get; set; }
 
-        [Option("debug", Default = 0, HelpText = "Debug mode. 0 - off, 1 - ticks with interval, 2 - manual step through ticks")]
+        [Option("debug", Default = 0, HelpText = "Debug output mode. 0 - minimal output, 1 - full output, 2 - full output with interval, 2 - full output with manual step through")]
         public int DebugMode { get; set; }
     }
 }
