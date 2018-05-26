@@ -222,7 +222,7 @@ namespace Lab1 {
                 if (debugMode == 2) {
                     Console.ReadKey();
                 }
-                else {
+                else if(debugMode == 1) {
                     System.Threading.Thread.Sleep(interval);
                 }
             }
