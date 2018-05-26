@@ -247,9 +247,8 @@ namespace Lab1 {
 
             if (debugMode != 0) {
                 VisualizeMemory();
+                NormalizeMemory();
             }
-
-            NormalizeMemory();
 
             if (IsFinished()) {
                 Stop();
