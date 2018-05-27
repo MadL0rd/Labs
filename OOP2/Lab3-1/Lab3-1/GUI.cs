@@ -15,6 +15,9 @@ namespace Lab3_1 {
     public partial class GUIForm : Form {
 
         public ChartArea chartArea;
+        Depot depot;
+
+        int dif = 100;
 
         Timer interval = new Timer();
 
@@ -45,12 +48,14 @@ namespace Lab3_1 {
             routeTechsView.Columns.Add("Job");
             routeTechsView.Columns.Add("Time Left");
 
-            chartArea.AxisX.Interval = 1;
-            chartArea.AxisY.Interval = 1;
-            chartArea.AxisX.Maximum = 10;
+            chartArea.AxisX.Interval = 1 * dif;
+            chartArea.AxisY.Interval = 1 * dif;
+            chartArea.AxisX.Maximum = 10 * dif;
             chartArea.AxisX.Minimum = 0;
-            chartArea.AxisY.Maximum = 10;
+            chartArea.AxisY.Maximum = 10 * dif;
             chartArea.AxisY.Minimum = 0;
+            chartArea.AxisX.LabelStyle.Enabled = false;
+            chartArea.AxisY.LabelStyle.Enabled = false;
 
             chartArea.AxisX.MajorGrid.LineWidth = 0;
             chartArea.AxisY.MajorGrid.LineWidth = 0;
@@ -65,28 +70,29 @@ namespace Lab3_1 {
             var tramTechs = 3;
 
             for(int i = 0; i < tramTechs; i++) {
-                tramTechsView.Items.Add(new ListViewItem(new[] { "" + i, "Idling", "0" }));
+                AddViewItem(tramTechsView);
             }
 
             var routeTechs = 1;
             for (int i = 0; i < routeTechs; i++) {
-                routeTechsView.Items.Add(new ListViewItem(new[] { "" + i, "Idling", "0" }));
+                AddViewItem(routeTechsView);
             }
 
             // Создаем депо
-            var depot = new Depot(tramTechs, routeTechs);
+            depot = new Depot(tramTechs, routeTechs);
 
             List<Route> routes = new List<Route>() {
-                depot.addRoute(6, new List<Point> { new Point(9, 7), new Point(5, 3), new Point(3, 5), new Point(5, 7) }, Color.Blue),
-                depot.addRoute(4, new List<Point> { new Point(7, 6), new Point(7, 2), new Point(3, 2) }, Color.Green),
-                depot.addRoute(8, new List<Point> { new Point(1, 1), new Point(1, 4), new Point(3, 6), new Point(3, 9), new Point(8, 9), new Point(8, 1) }, Color.Red)
+                depot.addRoute(6, new List<Point> { new Point(5, 4), new Point(3, 5), new Point(5, 8), new Point(9, 8) }, Color.Blue),
+                depot.addRoute(4, new List<Point> { new Point(7, 4), new Point(7, 2), new Point(3, 2) }, Color.Green),
+                depot.addRoute(8, new List<Point> { new Point(3, 6), new Point(3, 9), new Point(8, 9), new Point(8, 1), new Point(1, 1), new Point(1, 4) }, Color.Red),
+                depot.addRoute(5, new List<Point> { new Point(5, 6), new Point(9, 3), new Point(3, 4), new Point(2, 7) }, Color.Purple)
             };
             routes.ForEach(route => {
                 AddSeries(route.id, route.color, route.stops);
             });
 
             // Добавляем трамваи
-            int numTrams = Prompt.ShowDialog("How many trams?", "Input", 20);
+            int numTrams = Prompt.ShowDialog("How many trams?", "Input", 24);
             for (int i = 0; i < numTrams; i++) {
                 var tram = depot.addTram();
                 AddPoint(tram.id, Color.Orange, new Point(-1, -1));
@@ -101,6 +107,14 @@ namespace Lab3_1 {
             interval.Start();
         }
 
+        void AddViewItem(ListView view) {
+            view.Items.Add(new ListViewItem(new[] { "" + view.Items.Count, "Idling", "-" }));
+        }
+
+        void RemoveViewItem(ListView view) {
+            view.Items.RemoveAt(view.Items.Count - 1);
+        }
+
         private void AddSeries(int id, Color color, List<Point> points) {
             var series = new Series("route" + id) {
                 ChartType = SeriesChartType.Line,
@@ -110,10 +124,12 @@ namespace Lab3_1 {
                 Color = color,
                 MarkerStyle = MarkerStyle.Circle
             };
-            for(int i = 0; i < points.Count; i++) {
-                series.Points.AddXY(points[i].X, points[i].Y);
+
+            series.Points.AddXY(5 * dif, 5 * dif);
+            for (int i = 0; i < points.Count; i++) {
+                series.Points.AddXY(points[i].X * dif, points[i].Y * dif);
             }
-            series.Points.AddXY(points[0].X, points[0].Y);
+            series.Points.AddXY(points[0].X * dif, points[0].Y * dif);
             series.IsVisibleInLegend = false;
             series.Legend = "Routes";
             var legendItem = new LegendItem() {
@@ -128,7 +144,7 @@ namespace Lab3_1 {
         }
 
         private Point CalculateMidPoint(Point point1, Point point2) {
-            return new Point((point1.X + point2.X) / 2, (point1.Y + point2.Y) / 2);
+            return new Point((point1.X * 100 + point2.X * 100) / 2, (point1.Y * 100 + point2.Y * 100) / 2);
         }
 
         private void AddPoint(int id, Color color, Point point) {
@@ -170,13 +186,13 @@ namespace Lab3_1 {
         public void SetRepairQueueAmount(string actorName, int dif) {
             var label = Controls.Find(actorName + "sQueuedLabel", true)[0];
 
-            label.Text = dif + " " + actorName + "s waiting to be repaired";
+            label.Text = dif + " " + actorName + "s waiting";
         }
 
         public void SetTechnicianWorking(string actorName, int techId, int actorId, int timeToRepair) {
             ListView view = Controls.Find(actorName + "TechsView", true)[0] as ListView;
 
-            view.Items[techId].SubItems[1].Text = "Tram " + actorId;
+            view.Items[techId].SubItems[1].Text = actorName + " " + actorId;
             view.Items[techId].SubItems[2].Text = "" + timeToRepair;
         }
 
@@ -187,17 +203,20 @@ namespace Lab3_1 {
             view.Items[techId].SubItems[2].Text = "-";
         }
 
-        public void UpdateTramStatus(int tramId, string status, bool stopped, int? routeId, Point prevStop, Point nextStop) {
+        public void UpdateTramStatus(int tramId, string status, bool stopped, int? routeId, Point prevStop, Point nextStop, float percentage) {
             var tramPoint = chart.Series["tram" + tramId];
             Point point;
             if(status == "waiting for repair" || status == "no route") {
                 point = new Point(-1, -1);
             }
-            else if(stopped) {
-                point = prevStop;                
+            else if(stopped || prevStop == nextStop) {
+                point = new Point(prevStop.X * dif, prevStop.Y * dif);                
             }
             else {
-                point = CalculateMidPoint(prevStop, nextStop);
+                var x = (nextStop.X * dif - prevStop.X * dif) * percentage;
+                var y = (nextStop.Y * dif - prevStop.Y * dif) * percentage;
+                point = new Point(prevStop.X * dif + (int)x, prevStop.Y * dif + (int)y);
+                Console.WriteLine("{0} -> {1} : {2} ({3}", prevStop, nextStop, point, percentage);
             }
             tramPoint.Points[0].XValue = point.X;
             tramPoint.Points[0].SetValueY(point.Y);
@@ -215,9 +234,43 @@ namespace Lab3_1 {
             var routeLine = chart.Series["route" + routeId];
             routeLine.BorderDashStyle = status == "online" ? ChartDashStyle.Solid : ChartDashStyle.Dash;
             var routeLegend = chart.Legends["Routes"].CustomItems[routeId - 1];
-            routeLegend.Name = "Route " + routeId + " (needs " + neededTrams + " trams)";
+            routeLegend.Name = "Route " + routeId + " (-" + neededTrams + " trams)";
         }
 
+        private void buttonAddTram_Click(object sender, EventArgs e) {
+            var tram = depot.addTram();
+            AddPoint(tram.id, Color.Orange, new Point(-1, -1));
+        }
+
+        private void buttonRemoveTram_Click(object sender, EventArgs e) {
+            var tram = depot.removeTram();
+            if (tram == null) return;
+            chart.Series["tram" + tram.id].Enabled = false;
+            chart.Legends["Trams"].CustomItems[tram.id - 1].Enabled = false;
+            Console.WriteLine("Removed tram {0}", tram.id);
+        }
+
+        private void buttonAddMechRoute_Click(object sender, EventArgs e) {
+            depot.addTech("route");
+            AddViewItem(routeTechsView);
+        }
+
+        private void buttonRemoveMechRoute_Click(object sender, EventArgs e) {
+            if (depot.removeTech("route")) {
+                RemoveViewItem(routeTechsView);
+            }
+        }
+
+        private void buttonAddMechTram_Click(object sender, EventArgs e) {
+            depot.addTech("tram");
+            AddViewItem(tramTechsView);
+        }
+
+        private void buttonRemoveMechTram_Click(object sender, EventArgs e) {
+            if (depot.removeTech("tram")) {
+                RemoveViewItem(tramTechsView);
+            }
+        }
     }
 
     public static class GUI {

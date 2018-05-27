@@ -31,6 +31,8 @@ namespace Lab3_1 {
         // Диспетчерская
         private RepairStation repairStation;
 
+        private int tramIndex = 0;
+
         // Конструктор создает депо и диспетчерскую
         public Depot(int tramTechs, int routeTechs) {
             repairStation = new RepairStation(this, tramTechs, routeTechs);
@@ -97,9 +99,40 @@ namespace Lab3_1 {
         // Создает трамвай и добавляет его в резерв
         // Создает и передает радио трамваю
         public Tram addTram() {
-            var tram = new Tram(trams.list.Count() + 1, new Radio(repairStation));
+            var tram = new Tram(tramIndex++ + 1, new Radio(repairStation));
             trams.add(tram);
             reserved.Add(tram);
+            return tram;
+        }
+
+        public Tram removeTram() {
+            Tram tram = null;
+
+            for (int i = 0; i < reserved.Count; i++) {
+                if (reserved[i].working) {
+                    tram = reserved[i];
+                    reserved.RemoveAt(i);
+                    break;
+                }
+            }
+
+            if(tram == null) {
+
+                for (int i = 0; i < trams.list.Count; i++) {
+
+                    if (trams.list[i].working) {
+                        tram = trams.list[i];
+                        tram.resetRoute();
+                        break;
+                    }
+                }
+            }
+
+            if(tram != null) {
+                trams.remove(tram);
+                tram.removed = true;
+            }
+
             return tram;
         }
 
@@ -111,6 +144,37 @@ namespace Lab3_1 {
             }
 
             tram.resetRoute();
+        }
+
+        public void addTech(string actorName) {
+            if(actorName == "tram") {
+                repairStation.numTramTechs++;
+            }
+            else if(actorName == "route") {
+                repairStation.numRouteTechs++;
+            }
+        }
+
+        public bool removeTech(string actorName) {
+            if (actorName == "tram") {
+                if (repairStation.numTramTechs > 1) {
+                    repairStation.numTramTechs--;
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            else if (actorName == "route") {
+                if (repairStation.numRouteTechs > 1) {
+                    repairStation.numRouteTechs--;
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+            return false;
         }
     }
 
@@ -132,7 +196,7 @@ namespace Lab3_1 {
         }
 
         // Кол-ва техников
-        private int numTramTechs, numRouteTechs;
+        public int numTramTechs, numRouteTechs;
 
         // Списки трамваев и маршрутов на починку
         private List<RepairSpot> tramsInRepair = new List<RepairSpot>();
@@ -214,13 +278,16 @@ namespace Lab3_1 {
 
         // Помещает трамвай в список на починку, говорит депо снять его с линии
         public void repair(Tram tram) {
-            repair(tram, Rnd.Next(4) + 2, tramsInRepair);
+            if(tram.removed) {
+                throw new Exception("Can't repair removed");
+            }
+            repair(tram, Rnd.Next(5) + 10, tramsInRepair);
             depot.moveToReserved(tram);
         }
 
         // Помещает маршрут в список на починку
         public void repair(Route route, Tram tram) {
-            repair(route, Rnd.Next(9) + 2, routesInRepair);
+            repair(route, Rnd.Next(9) + 10, routesInRepair);
         }
     }
 
@@ -230,6 +297,7 @@ namespace Lab3_1 {
 
         public bool working = true;
         public int id;
+        public bool removed = false;
 
         public abstract void update();
     }
@@ -251,9 +319,9 @@ namespace Lab3_1 {
         // Удаляет объект
         public void remove(T actor) {
 
-            if (!list.Contains(actor)) return;
-
-            list.Remove(actor);
+            if (!list.Contains(actor) || !list.Remove(actor)) {
+                throw new Exception("Not in this updater");
+            }            
         }
 
         // Обновляет состояния объектов
@@ -310,7 +378,7 @@ namespace Lab3_1 {
 
         // Возвращает случайную остановку
         public Point getFirstStop() {
-            return stops[Rnd.Next(stops.Count())];
+            return stops[0];
         }
 
         // Возвращает остановку после переданной
@@ -341,7 +409,7 @@ namespace Lab3_1 {
             );
             GUI.Instance.UpdateRouteStatus(id, status, neededTrams);
 
-            if (working && Rnd.Next(100) < 3) {
+            if (working && Rnd.Next(1000) < 5) {
                 working = false;
             }
         }
@@ -363,6 +431,7 @@ namespace Lab3_1 {
         private Point prevStop = new Point(-1, -1);
         // Время до следующей остановки
         private int timeLeft = 0;
+        private int totalTime = 0;
         // Находится ли трамвай на остановке
         private bool stopped = false;
         private bool staying = false;
@@ -377,9 +446,10 @@ namespace Lab3_1 {
         public void setRoute(Route route) {
             this.route = route;
             nextStop = route.getFirstStop();
-            prevStop = nextStop;
-            timeLeft = 0;
+            prevStop = new Point(5, 5);
+            timeLeft = -Rnd.Next(15);
             stopped = true;
+            staying = true;
             route.tramAdded();
         }
 
@@ -396,6 +466,10 @@ namespace Lab3_1 {
 
         // Обновляет состояние трамвая
         public override void update() {
+            if(removed) {
+                throw new Exception("Can't update removed tram");
+            }
+
             updateStatus();
 
             // Трамвай неисправен или стоит в депо
@@ -404,7 +478,7 @@ namespace Lab3_1 {
             }
 
             // Событие поломки
-            if (Rnd.Next(100) < 4) {
+            if (Rnd.Next(100) < 1) {
                 working = false;
             }
 
@@ -429,7 +503,9 @@ namespace Lab3_1 {
                 Console.WriteLine("Tram {0} is stalling, {1}", id, status);
             }
 
-            GUI.Instance.UpdateTramStatus(id, status, stopped, route?.id, prevStop, nextStop);
+            float timePast = totalTime - timeLeft;
+            float percentage = timePast / totalTime;
+            GUI.Instance.UpdateTramStatus(id, status, stopped, route?.id, prevStop, nextStop, percentage);
         }
 
         // Передвигает трамвай по маршруту
@@ -445,7 +521,8 @@ namespace Lab3_1 {
                     if (staying) {
                         var x = Math.Abs(nextStop.X - prevStop.X);
                         var y = Math.Abs(nextStop.Y - prevStop.Y);
-                        timeLeft = (int)Math.Ceiling(Math.Sqrt(x * x + y * y));
+                        totalTime = (int)Math.Ceiling(Math.Sqrt(x * x + y * y));
+                        timeLeft = totalTime;
                         stopped = false;
                         staying = false;
                     }
