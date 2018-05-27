@@ -6,22 +6,22 @@ namespace Lab3 {
     class Program {
         static void Main(string[] args) {
 
-            // Создаем депо
+            // РЎРѕР·РґР°РµРј РґРµРїРѕ
             var depot = new Depot();
 
-            // Добавляем трамваи
+            // Р”РѕР±Р°РІР»СЏРµРј С‚СЂР°РјРІР°Рё
             for (int i = 0; i < 29; i++) {
                 depot.addTram();
             }
 
-            // Добавляем пути
+            // Р”РѕР±Р°РІР»СЏРµРј РїСѓС‚Рё
             depot.addRoute(3, new List<string>{ "Stop 1", "Stop 2", "Stop 3"});
             depot.addRoute(8, new List<string>{ "Stop 4", "Stop 5", "Stop 6"});
             depot.addRoute(6, new List<string>{ "Stop 7", "Stop 8", "Stop 9"});
             depot.addRoute(5, new List<string>{ "Stop 10", "Stop 11", "Stop 12"});
             depot.addRoute(5, new List<string> { "Stop 11", "Stop 12", "Stop 13"});
 
-            // Запускаем цикл обновления состояний
+            // Р—Р°РїСѓСЃРєР°РµРј С†РёРєР» РѕР±РЅРѕРІР»РµРЅРёСЏ СЃРѕСЃС‚РѕСЏРЅРёР№
             while (true) {
                 depot.update();
                 System.Threading.Thread.Sleep(1000);
@@ -29,7 +29,7 @@ namespace Lab3 {
         }
     }
 
-    // Рнг генератор
+    // Р РЅРі РіРµРЅРµСЂР°С‚РѕСЂ
     class Rnd {
         private static Random rnd = new Random();
 
@@ -44,26 +44,26 @@ namespace Lab3 {
         }
     }
 
-    // Депо
+    // Р”РµРїРѕ
     class Depot {
 
-        // Маршруты и трамваи
+        // РњР°СЂС€СЂСѓС‚С‹ Рё С‚СЂР°РјРІР°Рё
         private ActorUpdater<Route> routes = new ActorUpdater<Route>();
         private ActorUpdater<Tram> trams = new ActorUpdater<Tram>();
 
-        // Резерв трамваев
+        // Р РµР·РµСЂРІ С‚СЂР°РјРІР°РµРІ
         private List<Tram> reserved = new List<Tram>();
 
-        // Диспетчерская
+        // Р”РёСЃРїРµС‚С‡РµСЂСЃРєР°СЏ
         private RepairStation repairStation;
 
-        // Конструктор создает депо и диспетчерскую
+        // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃРѕР·РґР°РµС‚ РґРµРїРѕ Рё РґРёСЃРїРµС‚С‡РµСЂСЃРєСѓСЋ
         public Depot() {
             repairStation = new RepairStation(this, 3, 1);
         }
 
-        // Обновляет состояние диспетчерской, распределяет трамваи, 
-        // обновляет состояния маршрутов и трамваев
+        // РћР±РЅРѕРІР»СЏРµС‚ СЃРѕСЃС‚РѕСЏРЅРёРµ РґРёСЃРїРµС‚С‡РµСЂСЃРєРѕР№, СЂР°СЃРїСЂРµРґРµР»СЏРµС‚ С‚СЂР°РјРІР°Рё, 
+        // РѕР±РЅРѕРІР»СЏРµС‚ СЃРѕСЃС‚РѕСЏРЅРёСЏ РјР°СЂС€СЂСѓС‚РѕРІ Рё С‚СЂР°РјРІР°РµРІ
         public void update() {
             Console.WriteLine("TRAM DEPOT LOG");
             Console.WriteLine();
@@ -81,29 +81,29 @@ namespace Lab3 {
             Console.WriteLine();
         }
 
-        // Распределяет трамваи из резерва по маршрутам с низким числом трамваев
+        // Р Р°СЃРїСЂРµРґРµР»СЏРµС‚ С‚СЂР°РјРІР°Рё РёР· СЂРµР·РµСЂРІР° РїРѕ РјР°СЂС€СЂСѓС‚Р°Рј СЃ РЅРёР·РєРёРј С‡РёСЃР»РѕРј С‚СЂР°РјРІР°РµРІ
         private void dispatchReserved() {
 
-            // Находим все рабочие трамваи в резерве
+            // РќР°С…РѕРґРёРј РІСЃРµ СЂР°Р±РѕС‡РёРµ С‚СЂР°РјРІР°Рё РІ СЂРµР·РµСЂРІРµ
             var workingReserved = reserved.FindAll(tram => {
                 return tram.working;
             });
 
-            // Распределяем трамваи по маршрутам, которым не хватает трамваев
+            // Р Р°СЃРїСЂРµРґРµР»СЏРµРј С‚СЂР°РјРІР°Рё РїРѕ РјР°СЂС€СЂСѓС‚Р°Рј, РєРѕС‚РѕСЂС‹Рј РЅРµ С…РІР°С‚Р°РµС‚ С‚СЂР°РјРІР°РµРІ
             for(int i = 0, len = routes.list.Count(); i < len; i++) {
                 var route = routes.list[i];
                 while (route.needsTrams()) {
 
-                    // В резерве не осталось трамваев
+                    // Р’ СЂРµР·РµСЂРІРµ РЅРµ РѕСЃС‚Р°Р»РѕСЃСЊ С‚СЂР°РјРІР°РµРІ
                     if (workingReserved.Count() == 0) {
                         Console.WriteLine("0 trams in reserve");
                         return;
                     }
 
-                    // Устанавливаем маршрут
+                    // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµРј РјР°СЂС€СЂСѓС‚
                     workingReserved[0].setRoute(route);
 
-                    // Удаляем из резерва
+                    // РЈРґР°Р»СЏРµРј РёР· СЂРµР·РµСЂРІР°
                     reserved.Remove(workingReserved[0]);
                     workingReserved.RemoveAt(0);
                 }
@@ -111,20 +111,20 @@ namespace Lab3 {
             Console.WriteLine("{0} trams in reserve", workingReserved.Count());
         }
 
-        // Создает маршрут
+        // РЎРѕР·РґР°РµС‚ РјР°СЂС€СЂСѓС‚
         public void addRoute(int neededTrams, List<string> stops) {
             routes.add(new Route(routes.list.Count() + 1, neededTrams, stops));
         }
 
-        // Создает трамвай и добавляет его в резерв
-        // Создает и передает радио трамваю
+        // РЎРѕР·РґР°РµС‚ С‚СЂР°РјРІР°Р№ Рё РґРѕР±Р°РІР»СЏРµС‚ РµРіРѕ РІ СЂРµР·РµСЂРІ
+        // РЎРѕР·РґР°РµС‚ Рё РїРµСЂРµРґР°РµС‚ СЂР°РґРёРѕ С‚СЂР°РјРІР°СЋ
         public void addTram() {
             var tram = new Tram(trams.list.Count() + 1, new Radio(repairStation));
             trams.add(tram);
             reserved.Add(tram);
         }
 
-        // Перемещает трамвай в резерв
+        // РџРµСЂРµРјРµС‰Р°РµС‚ С‚СЂР°РјРІР°Р№ РІ СЂРµР·РµСЂРІ
         public void moveToReserved(Tram tram) {
             if (!reserved.Contains(tram)) {
                 reserved.Add(tram);
@@ -133,13 +133,13 @@ namespace Lab3 {
         }
     }
 
-    // Диспетчерская (починочная станция)
+    // Р”РёСЃРїРµС‚С‡РµСЂСЃРєР°СЏ (РїРѕС‡РёРЅРѕС‡РЅР°СЏ СЃС‚Р°РЅС†РёСЏ)
     class RepairStation {
 
-        // Ссылка на депо
+        // РЎСЃС‹Р»РєР° РЅР° РґРµРїРѕ
         private Depot depot;
 
-        // Починочное место - хранит сломанный объект и время на его починку
+        // РџРѕС‡РёРЅРѕС‡РЅРѕРµ РјРµСЃС‚Рѕ - С…СЂР°РЅРёС‚ СЃР»РѕРјР°РЅРЅС‹Р№ РѕР±СЉРµРєС‚ Рё РІСЂРµРјСЏ РЅР° РµРіРѕ РїРѕС‡РёРЅРєСѓ
         private class RepairSpot {
             public Actor brokenActor { get; set; }
             public int timeToRepair { get; set; }
@@ -150,31 +150,31 @@ namespace Lab3 {
             }
         }
 
-        // Кол-ва техников
+        // РљРѕР»-РІР° С‚РµС…РЅРёРєРѕРІ
         private int numTramTechs, numRouteTechs;
 
-        // Списки трамваев и маршрутов на починку
+        // РЎРїРёСЃРєРё С‚СЂР°РјРІР°РµРІ Рё РјР°СЂС€СЂСѓС‚РѕРІ РЅР° РїРѕС‡РёРЅРєСѓ
         private List<RepairSpot> tramsInRepair = new List<RepairSpot>();
         private List<RepairSpot> routesInRepair = new List<RepairSpot>();
 
-        // Конструктор создает диспетчерскую, указывает, с каким депо нужно связаться
-        // Сохраняет кол-во техников
+        // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃРѕР·РґР°РµС‚ РґРёСЃРїРµС‚С‡РµСЂСЃРєСѓСЋ, СѓРєР°Р·С‹РІР°РµС‚, СЃ РєР°РєРёРј РґРµРїРѕ РЅСѓР¶РЅРѕ СЃРІСЏР·Р°С‚СЊСЃСЏ
+        // РЎРѕС…СЂР°РЅСЏРµС‚ РєРѕР»-РІРѕ С‚РµС…РЅРёРєРѕРІ
         public RepairStation(Depot depot, int numTramTechs, int numRouteTechs) {
             this.depot = depot;
             this.numTramTechs = numTramTechs;
             this.numRouteTechs = numRouteTechs;
         }
 
-        // Чинит маршруты и станции
+        // Р§РёРЅРёС‚ РјР°СЂС€СЂСѓС‚С‹ Рё СЃС‚Р°РЅС†РёРё
         public void update() {
             updateRepair(tramsInRepair, numTramTechs, "tram");
             updateRepair(routesInRepair, numRouteTechs, "route");
         }
 
-        // Чинит объекты из указанного списка
+        // Р§РёРЅРёС‚ РѕР±СЉРµРєС‚С‹ РёР· СѓРєР°Р·Р°РЅРЅРѕРіРѕ СЃРїРёСЃРєР°
         private void updateRepair(List<RepairSpot> repairSpots, int numTechs, string actorName) {
 
-            // Пока есть техники и есть что чинить, уменьшаем время починки объектов в списке
+            // РџРѕРєР° РµСЃС‚СЊ С‚РµС…РЅРёРєРё Рё РµСЃС‚СЊ С‡С‚Рѕ С‡РёРЅРёС‚СЊ, СѓРјРµРЅСЊС€Р°РµРј РІСЂРµРјСЏ РїРѕС‡РёРЅРєРё РѕР±СЉРµРєС‚РѕРІ РІ СЃРїРёСЃРєРµ
             var n = numTechs;
             for (int i = 0; i < repairSpots.Count(); i++) {
                 if (n <= 0) break;
@@ -182,7 +182,7 @@ namespace Lab3 {
                 n--;
             }
 
-            // Находим все исправленные объекты, устанавливаем им соответствующий статус и убираем из списка
+            // РќР°С…РѕРґРёРј РІСЃРµ РёСЃРїСЂР°РІР»РµРЅРЅС‹Рµ РѕР±СЉРµРєС‚С‹, СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РёРј СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РёР№ СЃС‚Р°С‚СѓСЃ Рё СѓР±РёСЂР°РµРј РёР· СЃРїРёСЃРєР°
             for (int i = repairSpots.Count() - 1; i >= 0; i--) {
                 if (repairSpots[i].timeToRepair == 0) {
                     repairSpots[i].brokenActor.working = true;
@@ -190,7 +190,7 @@ namespace Lab3 {
                 }
             }
             
-            // Лог
+            // Р›РѕРі
             for (int i = 0; i < numTechs; i++) {
                 if (i < repairSpots.Count()) {
                     Console.WriteLine("Repairing {0} {1} ", actorName, repairSpots[i].brokenActor.id);
@@ -209,9 +209,9 @@ namespace Lab3 {
             }
         }
 
-        // Помещает переданный объект в список на починку
+        // РџРѕРјРµС‰Р°РµС‚ РїРµСЂРµРґР°РЅРЅС‹Р№ РѕР±СЉРµРєС‚ РІ СЃРїРёСЃРѕРє РЅР° РїРѕС‡РёРЅРєСѓ
         private void repair(Actor actor, int timeToRepair, List<RepairSpot> repairSpots) {
-            // Проверяем, что объекта нет в списке
+            // РџСЂРѕРІРµСЂСЏРµРј, С‡С‚Рѕ РѕР±СЉРµРєС‚Р° РЅРµС‚ РІ СЃРїРёСЃРєРµ
             if (
                 repairSpots.Find(repairSpot => {
                     return repairSpot.brokenActor == actor;
@@ -221,21 +221,21 @@ namespace Lab3 {
             }
         }
 
-        // Помещает трамвай в список на починку, говорит депо снять его с линии
+        // РџРѕРјРµС‰Р°РµС‚ С‚СЂР°РјРІР°Р№ РІ СЃРїРёСЃРѕРє РЅР° РїРѕС‡РёРЅРєСѓ, РіРѕРІРѕСЂРёС‚ РґРµРїРѕ СЃРЅСЏС‚СЊ РµРіРѕ СЃ Р»РёРЅРёРё
         public void repair(Tram tram) {
             repair(tram, Rnd.Next(4) + 2, tramsInRepair);
             depot.moveToReserved(tram);
         }
 
-        // Помещает маршрут в список на починку, говорит депо снять трамвай с линии
+        // РџРѕРјРµС‰Р°РµС‚ РјР°СЂС€СЂСѓС‚ РІ СЃРїРёСЃРѕРє РЅР° РїРѕС‡РёРЅРєСѓ, РіРѕРІРѕСЂРёС‚ РґРµРїРѕ СЃРЅСЏС‚СЊ С‚СЂР°РјРІР°Р№ СЃ Р»РёРЅРёРё
         public void repair(Route route, Tram tram) {
             repair(route, Rnd.Next(9) + 2, routesInRepair);
             depot.moveToReserved(tram);
         }
     }
 
-    // Абстрактый класс объекта
-    // Имеет id, рабочее/нерабочее состояние и метод обновления
+    // РђР±СЃС‚СЂР°РєС‚С‹Р№ РєР»Р°СЃСЃ РѕР±СЉРµРєС‚Р°
+    // РРјРµРµС‚ id, СЂР°Р±РѕС‡РµРµ/РЅРµСЂР°Р±РѕС‡РµРµ СЃРѕСЃС‚РѕСЏРЅРёРµ Рё РјРµС‚РѕРґ РѕР±РЅРѕРІР»РµРЅРёСЏ
     abstract class Actor {
 
         public bool working = true;
@@ -244,25 +244,25 @@ namespace Lab3 {
         public abstract void update();
     }
 
-    // Хранит и обновляет объекты
+    // РҐСЂР°РЅРёС‚ Рё РѕР±РЅРѕРІР»СЏРµС‚ РѕР±СЉРµРєС‚С‹
     class ActorUpdater<T> where T : Actor {
 
-        // Список объектов
+        // РЎРїРёСЃРѕРє РѕР±СЉРµРєС‚РѕРІ
         public List<T> list = new List<T>();
 
-        // Добавляет объект
+        // Р”РѕР±Р°РІР»СЏРµС‚ РѕР±СЉРµРєС‚
         public void add(T actor) {
             if (list.Contains(actor)) return;
             list.Add(actor);
         }
 
-        // Удаляет объект
+        // РЈРґР°Р»СЏРµС‚ РѕР±СЉРµРєС‚
         public void remove(T actor) {
             if (!list.Contains(actor)) return;
             list.Remove(actor);
         }
 
-        // Обновляет состояния объектов
+        // РћР±РЅРѕРІР»СЏРµС‚ СЃРѕСЃС‚РѕСЏРЅРёСЏ РѕР±СЉРµРєС‚РѕРІ
         public void update() {
             list.ForEach(subscriber => {
                 subscriber.update();
@@ -270,16 +270,16 @@ namespace Lab3 {
         }
     }
 
-    // Маршрут
+    // РњР°СЂС€СЂСѓС‚
     class Route : Actor {
 
-        // Список остановок
+        // РЎРїРёСЃРѕРє РѕСЃС‚Р°РЅРѕРІРѕРє
         private List<string> stops;        
 
-        // Сколько трамваев не хватает на маршруте
+        // РЎРєРѕР»СЊРєРѕ С‚СЂР°РјРІР°РµРІ РЅРµ С…РІР°С‚Р°РµС‚ РЅР° РјР°СЂС€СЂСѓС‚Рµ
         private int neededTrams;
 
-        // Конструктор создает маршрут с указанным id, остановками и кол-вом необходимых трамваев 
+        // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃРѕР·РґР°РµС‚ РјР°СЂС€СЂСѓС‚ СЃ СѓРєР°Р·Р°РЅРЅС‹Рј id, РѕСЃС‚Р°РЅРѕРІРєР°РјРё Рё РєРѕР»-РІРѕРј РЅРµРѕР±С…РѕРґРёРјС‹С… С‚СЂР°РјРІР°РµРІ 
         public Route(int id, int neededTrams, List<string> stops) {
             if(stops.Count() == 0) {
                 throw new Exception("Route doesn't have stops");
@@ -292,27 +292,27 @@ namespace Lab3 {
             this.id = id;
         }
 
-        // Возвращает, не хватает ли маршруту трамваев
+        // Р’РѕР·РІСЂР°С‰Р°РµС‚, РЅРµ С…РІР°С‚Р°РµС‚ Р»Рё РјР°СЂС€СЂСѓС‚Сѓ С‚СЂР°РјРІР°РµРІ
         public bool needsTrams() {
             return working && neededTrams != 0;
         }
 
-        // Уменьшает число нехватки трамваев
+        // РЈРјРµРЅСЊС€Р°РµС‚ С‡РёСЃР»Рѕ РЅРµС…РІР°С‚РєРё С‚СЂР°РјРІР°РµРІ
         public void tramAdded() {
             neededTrams--;
         }
 
-        // Увеличивает число нехватки трамваев
+        // РЈРІРµР»РёС‡РёРІР°РµС‚ С‡РёСЃР»Рѕ РЅРµС…РІР°С‚РєРё С‚СЂР°РјРІР°РµРІ
         public void tramRemoved() {
             neededTrams++;
         }
 
-        // Возвращает случайную остановку
+        // Р’РѕР·РІСЂР°С‰Р°РµС‚ СЃР»СѓС‡Р°Р№РЅСѓСЋ РѕСЃС‚Р°РЅРѕРІРєСѓ
         public string getFirstStop() {
             return stops[Rnd.Next(stops.Count())];
         }
 
-        // Возвращает остановку после переданной
+        // Р’РѕР·РІСЂР°С‰Р°РµС‚ РѕСЃС‚Р°РЅРѕРІРєСѓ РїРѕСЃР»Рµ РїРµСЂРµРґР°РЅРЅРѕР№
         public string getNextStop(string currentStop) {
             if (!stops.Contains(currentStop)) {
                 throw new Exception("Route doesn't have this stop" + currentStop);
@@ -325,7 +325,7 @@ namespace Lab3 {
             return stops[i];
         }
 
-        // Обновляет состояние маршрута - дает ему сломаться
+        // РћР±РЅРѕРІР»СЏРµС‚ СЃРѕСЃС‚РѕСЏРЅРёРµ РјР°СЂС€СЂСѓС‚Р° - РґР°РµС‚ РµРјСѓ СЃР»РѕРјР°С‚СЊСЃСЏ
         public override void update() {
 
             Console.WriteLine(
@@ -340,30 +340,30 @@ namespace Lab3 {
         }
     }
 
-    // Трамвай
+    // РўСЂР°РјРІР°Р№
     class Tram : Actor {
 
-        // Водитель
+        // Р’РѕРґРёС‚РµР»СЊ
         private Driver driver;
-        // Текущий маршрут
+        // РўРµРєСѓС‰РёР№ РјР°СЂС€СЂСѓС‚
         public Route route {
             get; private set;
         }
         
-        // Следующая остановка
+        // РЎР»РµРґСѓСЋС‰Р°СЏ РѕСЃС‚Р°РЅРѕРІРєР°
         private string nextStop = "";
-        // Время до следующей остановки
+        // Р’СЂРµРјСЏ РґРѕ СЃР»РµРґСѓСЋС‰РµР№ РѕСЃС‚Р°РЅРѕРІРєРё
         private int timeLeft = 0;
-        // Находится ли трамвай на остановке
+        // РќР°С…РѕРґРёС‚СЃСЏ Р»Рё С‚СЂР°РјРІР°Р№ РЅР° РѕСЃС‚Р°РЅРѕРІРєРµ
         private bool stopped = false;
 
-        // Конструктор создает трамвай с указанным id, создает водителя и передает ему радио
+        // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃРѕР·РґР°РµС‚ С‚СЂР°РјРІР°Р№ СЃ СѓРєР°Р·Р°РЅРЅС‹Рј id, СЃРѕР·РґР°РµС‚ РІРѕРґРёС‚РµР»СЏ Рё РїРµСЂРµРґР°РµС‚ РµРјСѓ СЂР°РґРёРѕ
         public Tram(int id, Radio radio) {
             driver = new Driver(this, radio);
             this.id = id;
         }
 
-        // Устанавливает маршрут трамвая и уменьшает число нехватки трамваев маршрута
+        // РЈСЃС‚Р°РЅР°РІР»РёРІР°РµС‚ РјР°СЂС€СЂСѓС‚ С‚СЂР°РјРІР°СЏ Рё СѓРјРµРЅСЊС€Р°РµС‚ С‡РёСЃР»Рѕ РЅРµС…РІР°С‚РєРё С‚СЂР°РјРІР°РµРІ РјР°СЂС€СЂСѓС‚Р°
         public void setRoute(Route route) {
             this.route = route;
             nextStop = route.getFirstStop();
@@ -372,36 +372,36 @@ namespace Lab3 {
             route.tramAdded();
         }
 
-        // Убирает трамвай с маршрута и увеличивает число нехватки трамваев маршрута
+        // РЈР±РёСЂР°РµС‚ С‚СЂР°РјРІР°Р№ СЃ РјР°СЂС€СЂСѓС‚Р° Рё СѓРІРµР»РёС‡РёРІР°РµС‚ С‡РёСЃР»Рѕ РЅРµС…РІР°С‚РєРё С‚СЂР°РјРІР°РµРІ РјР°СЂС€СЂСѓС‚Р°
         public void resetRoute() {
             if (route == null) return;
             route.tramRemoved();
             route = null;
         }
 
-        // Обновляет состояние трамвая
+        // РћР±РЅРѕРІР»СЏРµС‚ СЃРѕСЃС‚РѕСЏРЅРёРµ С‚СЂР°РјРІР°СЏ
         public override void update() {
             printStatus();
 
-            // Трамвай неисправен или стоит в депо
+            // РўСЂР°РјРІР°Р№ РЅРµРёСЃРїСЂР°РІРµРЅ РёР»Рё СЃС‚РѕРёС‚ РІ РґРµРїРѕ
             if (route == null || !working) {
                 return;
             }
 
-            // Событие поломки
+            // РЎРѕР±С‹С‚РёРµ РїРѕР»РѕРјРєРё
             if (Rnd.Next(100) < 4) {
                 working = false;
             }
 
-            // Даем водителю проверить состояние трамвая и маршрута
-            // Если все ок, движемся по маршруту
+            // Р”Р°РµРј РІРѕРґРёС‚РµР»СЋ РїСЂРѕРІРµСЂРёС‚СЊ СЃРѕСЃС‚РѕСЏРЅРёРµ С‚СЂР°РјРІР°СЏ Рё РјР°СЂС€СЂСѓС‚Р°
+            // Р•СЃР»Рё РІСЃРµ РѕРє, РґРІРёР¶РµРјСЃСЏ РїРѕ РјР°СЂС€СЂСѓС‚Сѓ
             if(driver.checkTram() && driver.checkRoute()) {
                 updatePosition();                
             }
 
         }
 
-        // Лог
+        // Р›РѕРі
         private void printStatus() {
             if (working && route != null) {
                 Console.WriteLine("Tram {0} is on route {1}, traveling to {2}", id, route.id, nextStop);
@@ -411,7 +411,7 @@ namespace Lab3 {
             }
         }
 
-        // Передвигает трамвай по маршруту
+        // РџРµСЂРµРґРІРёРіР°РµС‚ С‚СЂР°РјРІР°Р№ РїРѕ РјР°СЂС€СЂСѓС‚Сѓ
         private void updatePosition() {
             if (timeLeft == 0) {
                 if (stopped) {
@@ -429,22 +429,22 @@ namespace Lab3 {
         }
     }
 
-    // Водитель
+    // Р’РѕРґРёС‚РµР»СЊ
     class Driver {
 
-        // Радио для связи с диспетчерской
+        // Р Р°РґРёРѕ РґР»СЏ СЃРІСЏР·Рё СЃ РґРёСЃРїРµС‚С‡РµСЂСЃРєРѕР№
         private Radio radio;
 
-        // Ссылка на трамвай
+        // РЎСЃС‹Р»РєР° РЅР° С‚СЂР°РјРІР°Р№
         private Tram tram;
 
-        // Конструктор создает водителя, сохраняет ссылку на трамвай и радио
+        // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃРѕР·РґР°РµС‚ РІРѕРґРёС‚РµР»СЏ, СЃРѕС…СЂР°РЅСЏРµС‚ СЃСЃС‹Р»РєСѓ РЅР° С‚СЂР°РјРІР°Р№ Рё СЂР°РґРёРѕ
         public Driver(Tram tram, Radio radio) {
             this.radio = radio;
             this.tram = tram;
         }
 
-        // Проверяет состояние трамвая и оповещает диспетчерскую радио
+        // РџСЂРѕРІРµСЂСЏРµС‚ СЃРѕСЃС‚РѕСЏРЅРёРµ С‚СЂР°РјРІР°СЏ Рё РѕРїРѕРІРµС‰Р°РµС‚ РґРёСЃРїРµС‚С‡РµСЂСЃРєСѓСЋ СЂР°РґРёРѕ
         public bool checkTram() {
             var working = tram.working;
             if (!working) {
@@ -453,7 +453,7 @@ namespace Lab3 {
             return working;
         }
 
-        // Проверяет состояние пути и оповещает диспетчерскую по радио
+        // РџСЂРѕРІРµСЂСЏРµС‚ СЃРѕСЃС‚РѕСЏРЅРёРµ РїСѓС‚Рё Рё РѕРїРѕРІРµС‰Р°РµС‚ РґРёСЃРїРµС‚С‡РµСЂСЃРєСѓСЋ РїРѕ СЂР°РґРёРѕ
         public bool checkRoute() {
             var working = tram.route.working;
             if (!working) {
@@ -463,22 +463,22 @@ namespace Lab3 {
         }
     }
 
-    // Радио
+    // Р Р°РґРёРѕ
     class Radio {
 
-        // Ссылка на диспетчерскую
+        // РЎСЃС‹Р»РєР° РЅР° РґРёСЃРїРµС‚С‡РµСЂСЃРєСѓСЋ
         private RepairStation repairStation;
 
-        // Конструктор создает радио с ссылкой на диспетчерскую
+        // РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ СЃРѕР·РґР°РµС‚ СЂР°РґРёРѕ СЃ СЃСЃС‹Р»РєРѕР№ РЅР° РґРёСЃРїРµС‚С‡РµСЂСЃРєСѓСЋ
         public Radio(RepairStation repairStation) {
             this.repairStation = repairStation;
         }
 
-        // Сообщает в диспетчерскую о поломке трамвая
+        // РЎРѕРѕР±С‰Р°РµС‚ РІ РґРёСЃРїРµС‚С‡РµСЂСЃРєСѓСЋ Рѕ РїРѕР»РѕРјРєРµ С‚СЂР°РјРІР°СЏ
         public void brokeNotify(Tram tram) {
             repairStation.repair(tram);
         }
-        // Сообщает в диспетчерскую о поломке пути
+        // РЎРѕРѕР±С‰Р°РµС‚ РІ РґРёСЃРїРµС‚С‡РµСЂСЃРєСѓСЋ Рѕ РїРѕР»РѕРјРєРµ РїСѓС‚Рё
         public void brokeNotify(Route route, Tram tram) {
             repairStation.repair(route, tram);
         }
