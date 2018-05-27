@@ -62,8 +62,8 @@ namespace Lab1 {
                 if (j < 0 || j >= fitters.Length) continue;
 
                 RunManager(
-                    opts.MemoryLimit == null ? 1024 : opts.MemoryLimit.Value,
-                    opts.DefragTime == null ? 10 : opts.DefragTime.Value,
+                    opts.MemoryLimit == null ? opts.MemoryLimitDefault : opts.MemoryLimit.Value,
+                    opts.DefragTime == null ? opts.DefragTimeDefault : opts.DefragTime.Value,
                     fitters[j], input, opts.Interval, opts.DebugMode
                 );
             }
@@ -542,15 +542,24 @@ namespace Lab1 {
         string OutputStats() {
 
             var file = new StreamWriter("Log-" + Fitter.name + ".txt");
-            file.WriteLine("  Id; Desired; Queued; Started; Finished; Defrag");
+            file.WriteLine("  Id; Memory; Desired; Lifespan; Queued; Started; Finished; Defrag");
 
             int numProcesses = finishedProcesses.Count;
             double runtime = 0;
             double timeLoss = 0;
 
-
             finishedProcesses.ForEach(process => {
-                file.WriteLine("{0, 4}; {1, 7}; {2, 6}; {3, 7}; {4, 8}; {5, 6}", process.Id, process.DesiredStartTime, process.QueueTime, process.StartTime, process.FinishTime, process.Defragged);
+                file.WriteLine(
+                    "{0, 4}; {1, 6}; {2, 7}; {3, 8}; {4, 6}; {5, 7}; {6, 8}; {7, 6}",
+                    process.Id,
+                    process.MemoryReq,
+                    process.DesiredStartTime,
+                    process.Lifespan,
+                    process.QueueTime,
+                    process.StartTime,
+                    process.FinishTime,
+                    process.Defragged
+                );
                 runtime += process.FinishTime - process.DesiredStartTime;
                 timeLoss += process.StartTime - process.DesiredStartTime;
             });
@@ -729,9 +738,12 @@ namespace Lab1 {
         [Value(0, HelpText = "Memory Limit")]
         public int? MemoryLimit { get; set; }
 
+        public int MemoryLimitDefault = 1024;
+
         [Value(1, HelpText = "Defragmenation Time (in ticks)")]
         public int? DefragTime { get; set; }
 
+        public int DefragTimeDefault = 10;
 
         [Option("fitters", Default = new int[] { 1, 2, 3, 4 }, HelpText = "Memory fit algorithms. 1 - BestFit, 2 - WorstFit, 3 - FirstFit, 4 - NextFit")]
         public IEnumerable<int> Fitters { get; set; }
@@ -756,7 +768,7 @@ namespace Lab1 {
         [Option("start", Default = 15, HelpText = "Maximum process start delay")]
         public int StartTime { get; set; }
 
-        [Option("lifespan", Default = new int[] { 4, 15 }, HelpText = "Process start delay range")]
+        [Option("lifespan", Default = new int[] { 4, 15 }, HelpText = "Process lifespan range")]
         public IEnumerable<int> Lifespan { get; set; }
 
 
