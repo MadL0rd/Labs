@@ -577,12 +577,15 @@ namespace Lab1 {
             var runtimeDeviation = Math.Sqrt(runtimeDeviationComponent / numProcesses);
             var timeLossDeviation = Math.Sqrt(timeLossDeviationComponent / numProcesses);
 
+            double defraggedPctg = (double)statDefragged / (double)numProcesses * 100;
+            double queuedPctg = (double)statQueued / (double)numProcesses * 100;
+
             return String.Format(
-                "{0, 8}; {1, 12}; {2, 9}; {3, 6}; {4, 8}; {5, 13}; {6, 10}",
+                "{0, 8}; {1, 12}; {2, 8}%; {3, 5}%; {4, 8}; {5, 13}; {6, 10}",
                 runtimeAvg.ToString("#.##"),
                 runtimeDeviation.ToString("#.##"),
-                statDefragged,
-                statQueued,
+                defraggedPctg.ToString("#.##"),
+                queuedPctg.ToString("#.##"),
                 timeLossAvg.ToString("#.##"),
                 timeLossDeviation.ToString("#.##"),
                 Fitter.iterations
