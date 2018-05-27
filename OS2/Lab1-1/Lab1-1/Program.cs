@@ -30,7 +30,7 @@ namespace Lab1 {
         static void RunProgram(Options opts) {
 
             string input;
-            output = new StreamWriter("output.txt");
+            output = new StreamWriter(opts.OutputFile);
 
             if (!opts.ReadFromFile) {
                 input = GetRandomizedProcesses(
