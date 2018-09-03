@@ -91,6 +91,8 @@ namespace CSharp {
             long n1 = args.Length > 1 ? long.Parse(args[1]) : 5;
             long n2 = args.Length > 2 ? long.Parse(args[2]) : 6;
 
+            long amount = long.Parse(input.ReadLine());
+
             while (!input.EndOfStream) {
 
                 Console.WriteLine("T(5, 5)");

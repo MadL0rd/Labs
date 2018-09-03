@@ -17,7 +17,7 @@ namespace Generator {
             int n2 = args.Length > 3 ? int.Parse(args[3]) : 6;
             
 
-            string generated = "";
+            string generated = "" + amount + "\n";
             for(int i = 0; i < amount; i++) {
                 generated += GenerateMatrix(n1, n1);
                 generated += GenerateMatrix(n2, n2);
