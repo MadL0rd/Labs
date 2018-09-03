@@ -206,7 +206,7 @@ namespace Lab3_1 {
         public void UpdateTramStatus(int tramId, string status, bool stopped, int? routeId, Point prevStop, Point nextStop, float percentage) {
             var tramPoint = chart.Series["tram" + tramId];
             Point point;
-            if(status == "waiting for repair" || status == "no route") {
+            if(status == "no route") {
                 point = new Point(-1, -1);
             }
             else if(stopped || prevStop == nextStop) {
@@ -216,10 +216,16 @@ namespace Lab3_1 {
                 var x = (nextStop.X * dif - prevStop.X * dif) * percentage;
                 var y = (nextStop.Y * dif - prevStop.Y * dif) * percentage;
                 point = new Point(prevStop.X * dif + (int)x, prevStop.Y * dif + (int)y);
-                Console.WriteLine("{0} -> {1} : {2} ({3}", prevStop, nextStop, point, percentage);
             }
             tramPoint.Points[0].XValue = point.X;
             tramPoint.Points[0].SetValueY(point.Y);
+
+            if(status == "waiting for repair") {
+                tramPoint.Color = Color.Red;
+            }
+            else {
+                tramPoint.Color = Color.Orange;
+            }
 
             var tramLegend = chart.Legends["Trams"].CustomItems[tramId - 1];
             tramLegend.Name = "Tram " + tramId;

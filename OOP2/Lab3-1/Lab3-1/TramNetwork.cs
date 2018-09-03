@@ -282,7 +282,7 @@ namespace Lab3_1 {
                 throw new Exception("Can't repair removed");
             }
             repair(tram, Rnd.Next(5) + 10, tramsInRepair);
-            depot.moveToReserved(tram);
+            //depot.moveToReserved(tram);
         }
 
         // Помещает маршрут в список на починку
