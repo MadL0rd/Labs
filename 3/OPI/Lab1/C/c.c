@@ -11,10 +11,8 @@ int main(int argc, char *argv[]) {
 
 	long n1 = 5;
 	long n2 = 6;
-	int amount;
-	long **m1, **m2;
+	long amount;
 	float a, d;
-	long i;
 	long c1, c2;
 
 	if (argc > 2) {

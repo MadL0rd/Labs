@@ -5,8 +5,7 @@ const n2 : longint = 6;
 
 var amount : longint;
 var a, d : real;
-var i, k, c1, c2 : longint;
-var i1, i2, i3, i4, i5, i6 : longint;
+var c1, c2 : longint;
 
 function pow(number, exponent : real) : real;
 begin
