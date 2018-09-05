@@ -1,4 +1,4 @@
-program pascal;
+program cubicEq;
 
 const n1 : longint = 5;
 const n2 : longint = 6;
@@ -8,7 +8,7 @@ var a, d : real;
 var i, k, c1, c2 : longint;
 var i1, i2, i3, i4, i5, i6 : longint;
 
-function pow (number, exponent : real) : real;
+function pow(number, exponent : real) : real;
 begin
   if number = 0 then begin
     pow := 0;
@@ -72,12 +72,42 @@ begin
   writeln('x3 = ', x2r:10:8, ' - i*', x2i:10:8, ';');
 end;
 
+function countEvenColPositiveCells(n : longint; m : longint) : longint;
+var i, k, count, v : longint;
 begin
+	v := 0;
+	count := 0;
+  k := 1;
 
+	while k <= m do begin
+
+    i := 1;
+		while i <= n do begin
+			read(v);
+			write(v, ' ');
+
+			if i + 1 <= n then begin
+        read(v);
+        write(v, ' ');
+				if v > 0 then count := count + 1;
+			end;
+
+        i := i + 2;
+		end;
+
+	  writeln;
+    k := k + 1;		
+  end;
+
+	countEvenColPositiveCells := count;
+end;
+
+
+begin
   assign(input,'input.txt');
   reset(input);
 
-  readln(amount);
+  read(amount);
   writeln('Pascal program.');
   writeln(amount, ' matrices');
 
@@ -85,25 +115,11 @@ begin
 
     dec(amount);
 
-    c1 := 0;
-    c2 := 0;
-
     writeln('T(5, 5)');
-    for i := 1 to n1 do begin
-      read(i1, i2, i3, i4, i5);
-      writeln(i1, ' ', i2, ' ', i3, ' ', i4, ' ', i5);
-      if i2 > 0 then c1 := c1 + 1;
-      if i4 > 0 then c1 := c1 + 1;
-    end;
+    c1 := countEvenColPositiveCells(n1, n1);
 
     writeln('D(6, 6)');
-    for i := 1 to n2 do begin
-      read(i1, i2, i3, i4, i5, i6);
-      writeln(i1, ' ', i2, ' ', i3, ' ', i4, ' ', i5, ' ', i6);
-      if i2 > 0 then c2 := c2 + 1;
-      if i4 > 0 then c2 := c2 + 1;
-      if i6 > 0 then c2 := c2 + 1;
-    end;
+    c2 := countEvenColPositiveCells(n2, n2);
 
     writeln;
 
@@ -118,4 +134,3 @@ begin
     writeln;
   end;
 end.
-

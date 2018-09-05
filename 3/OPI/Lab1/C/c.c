@@ -101,9 +101,7 @@ void SolveKindOfCubic(float a, float d) {
 }
 
 long CountEvenColPositiveCells(long n, long m) {
-	long i, k, count, v = 0;
-
-	count = 0;
+	long i, k, count = 0, v = 0;
 
 	for (k = 0; k < m; k++) {
 		for (i = 0; i < n; i = i + 2) {
