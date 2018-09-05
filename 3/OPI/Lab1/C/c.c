@@ -5,8 +5,7 @@
 long Factorial(long a);
 float PowWithNegative(float n, float p);
 void SolveKindOfCubic(float a, float d);
-long CountEvenColPositiveCells(long** matrix, long n, long m);
-long** ReadMatrix(long n, long m);
+long CountEvenColPositiveCells(long n, long m);
 
 int main(int argc, char *argv[]) {
 
@@ -26,33 +25,23 @@ int main(int argc, char *argv[]) {
 	}
 
 	scanf("%d", &amount);
+	printf("C program.\n%d matrices.\n", amount);
 
 	while (amount--) {
 
 		printf("T(5, 5)\n");
-		m1 = ReadMatrix(n1, n1);
+		c1 = CountEvenColPositiveCells(n1, n1);
 		printf("D(6, 6)\n");
-		m2 = ReadMatrix(n2, n2);
+		c2 = CountEvenColPositiveCells(n2, n2);
 		printf("\n");
-
-		c1 = CountEvenColPositiveCells(m1, n1, n1);
-		c2 = CountEvenColPositiveCells(m2, n2, n2);
-		printf("a = %ld\n", c1);
-		printf("b = %ld\n", c2);
+		printf("a = %ld;\n", c1);
+		printf("b = %ld;\n", c2);
 
 		a = 3 * Factorial(c1 + c2);
 		d = 2 * Factorial(c1);
 
 		SolveKindOfCubic(a, d);
-
-		for (i = 0; i < n1; i++) {
-			free(m1[i]);
-		}
-		for (i = 0; i < n2; i++) {
-			free(m2[i]);
-		}
-		free(m1);
-		free(m2);
+		printf("\n\n\n");
 	}
 
 	return 0;
@@ -89,7 +78,7 @@ float PowWithNegative(float n, float p) {
 void SolveKindOfCubic(float a, float d) {
 	float g, p, s, u, x1, x2r, x2i, hsqrt;
 
-	printf("Solving cubic equiation for a = %f; b = 0; c = 0; d = %f;\n", a, d);
+	printf("Solving cubic equiation for a = %.1f; b = 0.0; c = 0; d = %.1f;\n", a, d);
 
 	g = d / a;
 
@@ -108,36 +97,31 @@ void SolveKindOfCubic(float a, float d) {
 	x2r = -1 * (s + u) / 2;
 	x2i = ((s - u) / 2) * pow(3, 0.5);
 
-	printf("x1 = %f;\nx2 = %f + i*%f;\nx3 = %f - i*%f", x1, x2r, x2i, x2r, x2i);
+	printf("x1 = %.8f;\nx2 = %.8f + i*%.8f;\nx3 = %.8f - i*%.8f;", x1, x2r, x2i, x2r, x2i);
 }
 
-long CountEvenColPositiveCells(long **matrix, long n, long m) {
-	long i, k, count;
+long CountEvenColPositiveCells(long n, long m) {
+	long i, k, count, v = 0;
 
 	count = 0;
 
-	for (i = 1; i < n; i = i + 2) {
-		for (k = 0; k < m; k++) {
-			if (matrix[i][k] > 0) {
-				count++;
+	for (k = 0; k < m; k++) {
+		for (i = 0; i < n; i = i + 2) {
+			scanf("%ld", &v);
+			printf("%ld ", v);
+
+			if (i + 1 < n) {
+				scanf("%ld", &v);
+				printf("%ld ", v);
+
+				if (v > 0) {
+					count++;
+				}
 			}
 		}
+		
+		printf("\n");
 	}
 
 	return count;
 }
-
-long** ReadMatrix(long n, long m) {
-	long i, k;
-	long **res = (long**)malloc(sizeof(long*)*n);
-	for (i = 0; i < n; i++) {
-		res[i] = (long*)malloc(sizeof(long)*m);
-		for (k = 0; k < m; k++) {
-			scanf("%ld", &res[i][k]);
-			printf("%ld ", res[i][k]);
-		}
-		printf("\n");
-	}
-	return res;
-}
-

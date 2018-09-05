@@ -3,11 +3,7 @@ program pascal;
 const n1 : longint = 5;
 const n2 : longint = 6;
 
-type matrix = array[1..6,1..6] of longint;
-
 var amount : longint;
-var m1 : matrix;
-var m2 : matrix;
 var a, d : real;
 var i, k, c1, c2 : longint;
 var i1, i2, i3, i4, i5, i6 : longint;
@@ -79,7 +75,8 @@ end;
 begin
 
 	readln(amount);
-	writeln(amount);
+  writeln('Pascal program.');
+	writeln(amount, ' matrices');
 
 	while amount > 0 do begin
 
