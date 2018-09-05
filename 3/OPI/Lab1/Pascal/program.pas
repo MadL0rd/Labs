@@ -74,6 +74,9 @@ end;
 
 begin
 
+  assign(input,'input.txt');
+  reset(input);
+
 	readln(amount);
   writeln('Pascal program.');
 	writeln(amount, ' matrices');
@@ -87,7 +90,7 @@ begin
 
 		writeln('T(5, 5)');
 		for i := 1 to n1 do begin
-			readln(i1, i2, i3, i4, i5);
+			read(i1, i2, i3, i4, i5);
 			writeln(i1, ' ', i2, ' ', i3, ' ', i4, ' ', i5);
 			if i2 > 0 then c1 := c1 + 1;
 			if i4 > 0 then c1 := c1 + 1;
@@ -95,7 +98,7 @@ begin
 
 		writeln('D(6, 6)');
 		for i := 1 to n2 do begin
-			readln(i1, i2, i3, i4, i5, i6);
+			read(i1, i2, i3, i4, i5, i6);
 			writeln(i1, ' ', i2, ' ', i3, ' ', i4, ' ', i5, ' ', i6);
 			if i2 > 0 then c2 := c2 + 1;
 			if i4 > 0 then c2 := c2 + 1;
