@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 		freopen("input.txt", "r", stdin);
 	}
 
-	scanf("%d", &amount);
+	scanf("%ld", &amount);
 	printf("C program.\n%d matrices.\n", amount);
 
 	while (amount--) {

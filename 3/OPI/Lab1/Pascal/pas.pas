@@ -74,31 +74,31 @@ end;
 function countEvenColPositiveCells(n : longint; m : longint) : longint;
 var i, k, count, v : longint;
 begin
-	v := 0;
-	count := 0;
+  v := 0;
+  count := 0;
   k := 1;
 
-	while k <= m do begin
+  while k <= m do begin
 
     i := 1;
-		while i <= n do begin
-			read(v);
-			write(v, ' ');
+    while i <= n do begin
+      read(v);
+      write(v, ' ');
 
-			if i + 1 <= n then begin
+      if i + 1 <= n then begin
         read(v);
         write(v, ' ');
-				if v > 0 then count := count + 1;
-			end;
+        if v > 0 then count := count + 1;
+      end;
 
         i := i + 2;
-		end;
+    end;
 
-	  writeln;
-    k := k + 1;		
+    writeln;
+    k := k + 1;    
   end;
 
-	countEvenColPositiveCells := count;
+  countEvenColPositiveCells := count;
 end;
 
 
