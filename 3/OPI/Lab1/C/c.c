@@ -4,7 +4,7 @@
 
 long Factorial(long a);
 float PowWithNegative(float n, float p);
-void SolveKindOfCubic(float a, float d);
+void SolveKindOfCubic(float a, float d, char* res);
 long CountEvenColPositiveCells(long n, long m);
 
 int main(int argc, char *argv[]) {
@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
 	long amount;
 	float a, d;
 	long c1, c2;
+	char res[300];
 
 	if (argc > 2) {
 		freopen(argv[2], "r", stdin);
@@ -38,8 +39,9 @@ int main(int argc, char *argv[]) {
 		a = 3 * Factorial(c1 + c2);
 		d = 2 * Factorial(c1);
 
-		SolveKindOfCubic(a, d);
-		printf("\n\n\n");
+		printf("Solving cubic equiation for a = %.1f; b = 0.0; c = 0; d = %.1f;\n", a, d);
+		SolveKindOfCubic(a, d, res);
+		printf("%s\n\n\n", res);
 	}
 
 	return 0;
@@ -73,10 +75,8 @@ float PowWithNegative(float n, float p) {
 	}
 }
 
-void SolveKindOfCubic(float a, float d) {
+void SolveKindOfCubic(float a, float d, char* res) {
 	float g, p, s, u, x1, x2r, x2i, hsqrt;
-
-	printf("Solving cubic equiation for a = %.1f; b = 0.0; c = 0; d = %.1f;\n", a, d);
 
 	g = d / a;
 
@@ -95,7 +95,7 @@ void SolveKindOfCubic(float a, float d) {
 	x2r = -1 * (s + u) / 2;
 	x2i = ((s - u) / 2) * pow(3, 0.5);
 
-	printf("x1 = %.8f;\nx2 = %.8f + i*%.8f;\nx3 = %.8f - i*%.8f;", x1, x2r, x2i, x2r, x2i);
+	sprintf(res, "x1 = %.8f;\nx2 = %.8f + i*%.8f;\nx3 = %.8f - i*%.8f;", x1, x2r, x2i, x2r, x2i);
 }
 
 long CountEvenColPositiveCells(long n, long m) {

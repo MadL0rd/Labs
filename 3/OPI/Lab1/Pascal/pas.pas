@@ -44,11 +44,9 @@ begin
   end;
 end;
 
-procedure solveKindOfCubic(a : real; d : real);
+function solveKindOfCubic(a : real; d : real) : string;
 var g, p, s, u, x1, x2r, x2i, hsqrt : real;
 begin
-  writeln('Solving cubic equiation for a = ', a:4:1, '; b = 0.0; c = 0.0; d = ', d:4:1, ';');
-
   g := d / a;
 
   hsqrt := sqrt(g * g / 4);
@@ -66,9 +64,11 @@ begin
   x2r := -1 * (s + u) / 2;
   x2i := ((s - u) / 2) * pow(3, 0.5);
 
-  writeln('x1 = ', x1:10:8, ';');
-  writeln('x2 = ', x2r:10:8, ' + i*', x2i:10:8, ';');
-  writeln('x3 = ', x2r:10:8, ' - i*', x2i:10:8, ';');
+  solveKindOfCubic := concat(
+    writeln('x1 = ', x1:10:8, ';'),
+    writeln('x2 = ', x2r:10:8, ' + i*', x2i:10:8, ';'),
+    writeln('x3 = ', x2r:10:8, ' - i*', x2i:10:8, ';')
+  );
 end;
 
 function countEvenColPositiveCells(n : longint; m : longint) : longint;
@@ -128,7 +128,8 @@ begin
     a := 3 * factorial(c1 + c2);
     d := 2 * factorial(c1);
 
-    solveKindOfCubic(a, d);
+    writeln('Solving cubic equiation for a = ', a:4:1, '; b = 0.0; c = 0.0; d = ', d:4:1, ';');
+    writeln(solveKindOfCubic(a, d))
     writeln;
     writeln;
   end;
