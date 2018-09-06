@@ -46,6 +46,7 @@ end;
 
 function solveKindOfCubic(a : real; d : real) : string;
 var g, p, s, u, x1, x2r, x2i, hsqrt : real;
+var sx1, sx2r, sx2i : string;
 begin
   g := d / a;
 
@@ -64,10 +65,14 @@ begin
   x2r := -1 * (s + u) / 2;
   x2i := ((s - u) / 2) * pow(3, 0.5);
 
+  str(x1:10:8, sx1);
+  str(x2r:10:8, sx2r);
+  str(x2i:10:8, sx2i);
+
   solveKindOfCubic := concat(
-    writeln('x1 = ', x1:10:8, ';'),
-    writeln('x2 = ', x2r:10:8, ' + i*', x2i:10:8, ';'),
-    writeln('x3 = ', x2r:10:8, ' - i*', x2i:10:8, ';')
+    'x1 = ', sx1, ';', #13#10,
+    'x2 = ', sx2r, ' + i*', sx2i, ';', #13#10,
+    'x3 = ', sx2r, ' - i*', sx2i, ';'
   );
 end;
 
@@ -129,7 +134,7 @@ begin
     d := 2 * factorial(c1);
 
     writeln('Solving cubic equiation for a = ', a:4:1, '; b = 0.0; c = 0.0; d = ', d:4:1, ';');
-    writeln(solveKindOfCubic(a, d))
+    writeln(solveKindOfCubic(a, d));
     writeln;
     writeln;
   end;
