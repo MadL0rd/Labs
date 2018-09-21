@@ -215,3 +215,6 @@ FakesAssemblies/
 **/*.Server/GeneratedArtifacts
 **/*.Server/ModelManifest.xml
 _Pvt_Extensions
+
+**/node_modules/
+course3/CG/Lab2-Bresenham/doc-templates
