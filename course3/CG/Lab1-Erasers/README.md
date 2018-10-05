@@ -1,1 +1,0 @@
-https://unshame.github.io/Labs/course3/CG/Lab1-Canvas/index.html
