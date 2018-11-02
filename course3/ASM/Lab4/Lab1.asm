@@ -33,16 +33,10 @@ diry2 db 0
 
 .code
 
-; уменьшает/увеличивает axis[0] в зависимости от направления в axis[1] 
-; меняет направление в соответствии с limits
-; записывает новую позицию в al и новое направление в ah
-move_axis proc
-arg axis:word, limits:byte = argslen
-
-    push bp   
-    mov bp, sp	 
-
-    mov ax, axis
+; уменьшает/увеличивает al в зависимости от направления в ah
+; меняет направление в ah в соответствии с limits
+move_axis proc c
+arg min:byte:1, max:byte:1
 
     ; проверяем направление движения
     check_dir:
@@ -53,31 +47,28 @@ arg axis:word, limits:byte = argslen
     backward:
         dec al
 
-        cmp al, limits[0]
+        cmp al, min
         jne done
         xor ah, TRUE
-
         jmp done 
 
     ; движемся вперед
     forward:
         inc al
 
-        cmp al, limits[1]
+        cmp al, max
         jne done
         xor ah, TRUE
         jmp done
 
     done:
-        mov sp, bp
-        pop bp
-        ret argslen
+        ret
 
 move_axis endp
 
 ;позиционируем курсор
 set_cursor proc
-    mov bh, 0  ; в bh  № видеостраницы
+    mov bh, 0  ; в bh № видеостраницы
     mov ah, 2  ; функция
     int 10h
     ret
@@ -206,42 +197,38 @@ move:
     ; ось x
     mov dl, minx
     mov dh, maxx
-
     push dx
+
     mov al, x1
     mov ah, dirx1
-    push ax
     call move_axis
     mov x1, al
     mov dirx1, ah
 
-    push dx
     mov al, x2
     mov ah, dirx2
-    push ax
     call move_axis
     mov x2, al
     mov dirx2, ah
+    pop dx
 
     ; ось y
     mov dl, miny
     mov dh, maxy
-
     push dx
+
     mov al, y1
     mov ah, diry1
-    push ax
     call move_axis
     mov y1, al
     mov diry1, ah
 
-    push dx
     mov al, y2
     mov ah, diry2
-    push ax
     call move_axis
     mov y2, al
     mov diry2, ah
+    pop dx
 
 ; проверка столкновения кругов
 check_collision:
