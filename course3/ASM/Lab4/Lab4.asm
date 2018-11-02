@@ -44,22 +44,21 @@ arg min:byte:1, max:byte:1
         jne forward
 
     ; движемся назад
-    backward:
-        dec al
-
+    backward: 
         cmp al, min
-        jne done
-        xor ah, TRUE
-        jmp done 
-
+        je reverse
+        dec al
+        jmp done
+        
     ; движемся вперед
     forward:
-        inc al
-
         cmp al, max
-        jne done
-        xor ah, TRUE
+        je reverse
+        inc al
         jmp done
+
+    reverse:
+        xor ah, TRUE
 
     done:
         ret
