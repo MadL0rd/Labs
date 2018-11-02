@@ -1,0 +1,402 @@
+Turbo Assembler	 Version 3.1	    11/03/18 01:04:59	    Page 1
+lab1.asm
+
+
+
+      1	    0000			 .model	 small
+      2	    0000			 .stack	 200h
+      3					 .386
+      4
+      5	    0000			 .data
+      6		  =00FF			 TRUE equ 255
+      7		  =0000			 FALSE equ 0
+      8
+      9	    0000  30 24			 sphere	 db '0$'
+     10	    0002  79			 sphere_attr db	79h
+     11
+     12	    0003  2A 20	42 4F 4F 4D 21+	 xplosion db '*	BOOM!$'
+     13		  24
+     14	    000B  74			 xplosion_attr db 74h
+     15
+     16	    000C  00			 minx db 0
+     17	    000D  00			 miny db 0
+     18	    000E  4F			 maxx db 79
+     19	    000F  18			 maxy db 24
+     20
+     21	    0010  0001			 delayh	dw 1
+     22	    0012  0000			 delayl	dw 0
+     23	    0014  000A			 longdelay dw 10
+     24
+     25	    0016  ??			 x1 db ?
+     26	    0017  08			 y1 db 8
+     27	    0018  00			 dirx1 db 0
+     28	    0019  00			 diry1 db 0
+     29
+     30	    001A  23			 x2 db 35
+     31	    001B  ??			 y2 db ?
+     32	    001C  FF			 dirx2 db 255
+     33	    001D  00			 diry2 db 0
+     34
+     35	    001E			 .code
+     36
+     37					 ; уменьшает/увеличивает axis[0] в	зависимости от	    +
+     38					 направления	в axis[1]
+     39					 ; меняет	направление в соответствии с limits
+     40					 ; записывает	новую позицию в al	и новое направление+
+     41					 в ah
+     42	    0000			 move_axis proc
+     43		  =0004			 arg axis:word,	limits:byte = argslen
+     44
+     45	    0000  55			     push bp
+     46	    0001  8B EC			     mov bp, sp
+     47
+     48	    0003  8B 46	04		     mov ax, axis
+     49
+     50					     ; проверяем направление движения
+     51	    0006			     check_dir:
+     52	    0006  80 FC	00			 cmp ah, FALSE
+     53	    0009  75 11	90 90			 jne forward
+     54
+     55					     ; движемся	назад
+     56	    000D			     backward:
+     57	    000D  FE C8				 dec al
+Turbo Assembler	 Version 3.1	    11/03/18 01:04:59	    Page 2
+lab1.asm
+
+
+
+     58
+     59	    000F  3A 46	06			 cmp al, limits[0]
+     60	    0012  75 17	90 90			 jne done
+     61	    0016  80 F4	FF			 xor ah, TRUE
+     62
+     63	    0019  EB 10	90			 jmp done
+     64
+     65					     ; движемся	вперед
+     66	    001C			     forward:
+     67	    001C  FE C0				 inc al
+     68
+     69	    001E  3A 46	07			 cmp al, limits[1]
+     70	    0021  75 08	90 90			 jne done
+     71	    0025  80 F4	FF			 xor ah, TRUE
+     72	    0028  EB 01	90			 jmp done
+     73
+     74	    002B			     done:
+     75	    002B  8B E5				 mov sp, bp
+     76	    002D  5D				 pop bp
+     77	    002E  C2 0004			 ret argslen
+     78
+     79	    0031			 move_axis endp
+     80
+     81					 ;позиционируем курсор
+     82	    0031			 set_cursor proc
+     83	    0031  B7 00			     mov bh, 0	; в bh	 № видеостраницы
+     84	    0033  B4 02			     mov ah, 2	; функция
+     85	    0035  CD 10			     int 10h
+     86	    0037  C3			     ret
+     87	    0038			 set_cursor endp
+     88
+     89					 ; выводим шар
+     90	    0038			 draw_sphere proc
+     91	    0038  B4 09			     mov ah, 9	; функция
+     92	    003A  CD 21			     int 21h	; выводим все	до доллара
+     93	    003C  C3			     ret
+     94	    003D			 draw_sphere endp
+     95
+     96					 ; возращает типа рандомное число от 0 до bx
+     97	    003D			 rand proc
+     98	    003D  B4 00			     mov ah, 00h  ; получаем системное	время
+     99	    003F  CD 1A			     int 1ah	  ; помещаем время	в миллисекундах в CX:DX
+    100	    0041  8B C2			     mov ax, dx
+    101	    0043  33 D2			     xor dx, dx
+    102	    0045  8B CB			     mov cx, bx
+    103	    0047  F7 F1			     div cx	  ; получаем остаток от деления	на bx
+    104	    0049  C3			     ret
+    105	    004A			 rand endp
+    106
+    107					 ; очищает установленную позицию
+    108	    004A			 cls proc
+    109	    004A  B0 00			     mov al, 0
+    110	    004C  B4 06			     mov ah, 6
+    111	    004E  CD 10			     int 10h
+    112	    0050  C3			     ret
+    113	    0051			 cls endp
+    114
+Turbo Assembler	 Version 3.1	    11/03/18 01:04:59	    Page 3
+lab1.asm
+
+
+
+    115
+    116					 ; начало	программы
+    117	    0051			 start:
+    118
+    119					     ; адрес сегмента данных
+    120	    0051  B8 0000s		     mov ax, @data
+    121	    0054  8E D8			     mov ds, ax
+    122
+    123					     ; рандомим	x1
+    124	    0056  33 DB			     xor bx, bx
+    125	    0058  8A 1E	000Er		     mov bl, maxx
+    126	    005C  E8 FFDE		     call rand
+    127	    005F  88 16	0016r		     mov x1, dl
+    128
+    129					     ; рандомим	y2
+    130	    0063  33 DB			     xor bx, bx
+    131	    0065  8A 1E	000Fr		     mov bl, maxy
+    132	    0069  E8 FFD1		     call rand
+    133	    006C  88 16	001Br		     mov y2, dl
+    134
+    135					     ; прячем курсор
+    136	    0070  B4 01			     mov ah, 1
+    137	    0072  B5 14			     mov ch, 20
+    138	    0074  B1 00			     mov cl, 0
+    139	    0076  CD 10			     int 10h
+    140
+    141					     ; очищаем экран
+    142	    0078  8A 3E	0002r		     mov bh, sphere_attr ; текущие атрибуты
+    143	    007C  8A 0E	000Cr		     mov cl, minx	 ; координата	Х левого	верхнего угла   +
+    144					 экрана (№ столбца)
+    145	    0080  8A 2E	000Dr		     mov ch, miny	 ; координата	Y левого верхнего	угла    +
+    146					 экрана (№ строки)
+    147	    0084  8A 16	000Er		     mov dl, maxx	 ; координата	Х правого нижнего угла   +
+    148					 экрана  (№ столбца)
+    149	    0088  8A 36	000Fr		     mov dh, maxy	 ; координата	Y правого нижнего	угла    +
+    150					 экрана  (№ строки)
+    151	    008C  E8 FFBB		     call cls
+    152
+    153					 ; обновление	экрана
+    154	    008F			 update:
+    155
+    156					     ; выодим круг 1
+    157	    008F  8A 16	0016r		     mov dl, x1
+    158	    0093  8A 36	0017r		     mov dh, y1
+    159	    0097  E8 FF97		     call set_cursor
+    160	    009A  BA 0000r		     mov dx, offset sphere  ; в dx адрес первой буквы надписи
+    161	    009D  E8 FF98		     call draw_sphere
+    162
+    163					     ; выводим круг 2
+    164	    00A0  8A 16	001Ar		     mov dl, x2
+    165	    00A4  8A 36	001Br		     mov dh, y2
+    166	    00A8  E8 FF86		     call set_cursor
+    167	    00AB  BA 0000r		     mov dx, offset sphere
+    168	    00AE  E8 FF87		     call draw_sphere
+    169
+    170					     ; задержка
+    171	    00B1  B4 86			     mov ah, 86h
+Turbo Assembler	 Version 3.1	    11/03/18 01:04:59	    Page 4
+lab1.asm
+
+
+
+    172	    00B3  8B 0E	0010r		     mov cx, delayh
+    173	    00B7  8B 16	0012r		     mov dx, delayl
+    174	    00BB  CD 15			     int 15h
+    175
+    176					     ; проверяем выход из программы и	паузу
+    177	    00BD  B2 FF			     mov dl, 0ffh
+    178	    00BF  B4 06			     mov ah, 6
+    179	    00C1  CD 21			     int 21h
+    180					     ; никакая клавиша не нажата (zf=1)
+    181	    00C3  74 15	90 90		     jz	 clear
+    182					     ; пробел
+    183	    00C7  3C 20			     cmp al, 20h
+    184	    00C9  74 0B	90 90		     je	hold
+    185					     ; Esc
+    186	    00CD  3C 1B			     cmp al, 1bh
+    187	    00CF  0F 84	00D8		     je	 exit
+    188	    00D3  EB 05	90		     jmp clear
+    189
+    190					 ; ждем любой клавиши
+    191	    00D6			 hold:
+    192	    00D6  B4 00			     mov ah, 0
+    193	    00D8  CD 16			     int 16h
+    194
+    195					 ; стираем предыдущую позицию шаров
+    196	    00DA			 clear:
+    197	    00DA  8A 3E	0002r		     mov bh, sphere_attr
+    198
+    199	    00DE  8A 0E	0016r		     mov cl, x1
+    200	    00E2  8A 2E	0017r		     mov ch, y1
+    201	    00E6  8A 16	0016r		     mov dl, x1
+    202	    00EA  8A 36	0017r		     mov dh, y1
+    203	    00EE  E8 FF59		     call cls
+    204
+    205	    00F1  8A 0E	001Ar		     mov cl, x2
+    206	    00F5  8A 2E	001Br		     mov ch, y2
+    207	    00F9  8A 16	001Ar		     mov dl, x2
+    208	    00FD  8A 36	001Br		     mov dh, y2
+    209	    0101  E8 FF46		     call cls
+    210
+    211					 ; обновляем позиции кругов
+    212	    0104			 move:
+    213					     ; ось x
+    214	    0104  8A 16	000Cr		     mov dl, minx
+    215	    0108  8A 36	000Er		     mov dh, maxx
+    216
+    217	    010C  52			     push dx
+    218	    010D  A0 0016r		     mov al, x1
+    219	    0110  8A 26	0018r		     mov ah, dirx1
+    220	    0114  50			     push ax
+    221	    0115  E8 FEE8		     call move_axis
+    222	    0118  A2 0016r		     mov x1, al
+    223	    011B  88 26	0018r		     mov dirx1,	ah
+    224
+    225	    011F  52			     push dx
+    226	    0120  A0 001Ar		     mov al, x2
+    227	    0123  8A 26	001Cr		     mov ah, dirx2
+    228	    0127  50			     push ax
+Turbo Assembler	 Version 3.1	    11/03/18 01:04:59	    Page 5
+lab1.asm
+
+
+
+    229	    0128  E8 FED5		     call move_axis
+    230	    012B  A2 001Ar		     mov x2, al
+    231	    012E  88 26	001Cr		     mov dirx2,	ah
+    232
+    233					     ; ось y
+    234	    0132  8A 16	000Dr		     mov dl, miny
+    235	    0136  8A 36	000Fr		     mov dh, maxy
+    236
+    237	    013A  52			     push dx
+    238	    013B  A0 0017r		     mov al, y1
+    239	    013E  8A 26	0019r		     mov ah, diry1
+    240	    0142  50			     push ax
+    241	    0143  E8 FEBA		     call move_axis
+    242	    0146  A2 0017r		     mov y1, al
+    243	    0149  88 26	0019r		     mov diry1,	ah
+    244
+    245	    014D  52			     push dx
+    246	    014E  A0 001Br		     mov al, y2
+    247	    0151  8A 26	001Dr		     mov ah, diry2
+    248	    0155  50			     push ax
+    249	    0156  E8 FEA7		     call move_axis
+    250	    0159  A2 001Br		     mov y2, al
+    251	    015C  88 26	001Dr		     mov diry2,	ah
+    252
+    253					 ; проверка столкновения кругов
+    254	    0160			 check_collision:
+    255	    0160  8A 26	0016r		     mov ah, x1
+    256	    0164  3A 26	001Ar		     cmp ah, x2
+    257	    0168  0F 85	FF23		     jne update
+    258	    016C  8A 26	0017r		     mov ah, y1
+    259	    0170  3A 26	001Br		     cmp ah, y2
+    260	    0174  0F 85	FF17		     jne update
+    261
+    262					 ; эффект	при столкновении
+    263	    0178			 collide:
+    264	    0178  8A 3E	000Br		     mov bh, xplosion_attr
+    265	    017C  8A 0E	0016r		     mov cl, x1
+    266	    0180  8A 2E	0017r		     mov ch, y1
+    267	    0184  8A 16	0016r		     mov dl, x1
+    268	    0188  8A 36	0017r		     mov dh, y1
+    269	    018C  E8 FEBB		     call cls
+    270
+    271	    018F  8A 16	0016r		     mov dl, x1
+    272	    0193  8A 36	0017r		     mov dh, y1
+    273	    0197  E8 FE97		     call set_cursor
+    274	    019A  BA 0003r		     mov dx, offset xplosion
+    275	    019D  E8 FE98		     call draw_sphere
+    276
+    277					     ; задержка	при столкновении
+    278	    01A0  B4 86			     mov ah, 86h
+    279	    01A2  8B 0E	0014r		     mov cx, longdelay
+    280	    01A6  BA 0000		     mov dx, 0
+    281	    01A9  CD 15			     int 15h
+    282
+    283	    01AB			 exit:
+    284					     ; ресет курсора
+    285	    01AB  B4 01			     mov ah, 1
+Turbo Assembler	 Version 3.1	    11/03/18 01:04:59	    Page 6
+lab1.asm
+
+
+
+    286	    01AD  B5 06			     mov ch, 6
+    287	    01AF  B1 07			     mov cl, 7
+    288	    01B1  CD 10			     int 10h
+    289
+    290					     ; выход
+    291	    01B3  B4 4C			     mov ah, 4ch
+    292	    01B5  B0 00			     mov al, 0
+    293	    01B7  CD 21			     int 21h
+    294					 end start
+Turbo Assembler	 Version 3.1	    11/03/18 01:04:59	    Page 7
+Symbol Table
+
+
+
+
+Symbol Name			  Type	 Value
+
+??DATE				  Text	 "11/03/18"
+??FILENAME			  Text	 "lab1	  "
+??TIME				  Text	 "01:04:59"
+??VERSION			  Number 030A
+@32BIT				  Text	 0
+@CODE				  Text	 _TEXT
+@CODESIZE			  Text	 0
+@CPU				  Text	 0F0FH
+@CURSEG				  Text	 _TEXT
+@DATA				  Text	 DGROUP
+@DATASIZE			  Text	 0
+@FILENAME			  Text	 LAB1
+@INTERFACE			  Text	 00H
+@MODEL				  Text	 2
+@STACK				  Text	 DGROUP
+@WORDSIZE			  Text	 2
+ARGSLEN				  Number 0004
+AXIS				  Number [DGROUP:BP+0004]
+BACKWARD			  Near	 _TEXT:000D
+CHECK_COLLISION			  Near	 _TEXT:0160
+CHECK_DIR			  Near	 _TEXT:0006
+CLEAR				  Near	 _TEXT:00DA
+CLS				  Near	 _TEXT:004A
+COLLIDE				  Near	 _TEXT:0178
+DELAYH				  Word	 DGROUP:0010
+DELAYL				  Word	 DGROUP:0012
+DIRX1				  Byte	 DGROUP:0018
+DIRX2				  Byte	 DGROUP:001C
+DIRY1				  Byte	 DGROUP:0019
+DIRY2				  Byte	 DGROUP:001D
+DONE				  Near	 _TEXT:002B
+DRAW_SPHERE			  Near	 _TEXT:0038
+EXIT				  Near	 _TEXT:01AB
+FALSE				  Number 0000
+FORWARD				  Near	 _TEXT:001C
+HOLD				  Near	 _TEXT:00D6
+LIMITS				  Number [DGROUP:BP+0006]
+LONGDELAY			  Word	 DGROUP:0014
+MAXX				  Byte	 DGROUP:000E
+MAXY				  Byte	 DGROUP:000F
+MINX				  Byte	 DGROUP:000C
+MINY				  Byte	 DGROUP:000D
+MOVE				  Near	 _TEXT:0104
+MOVE_AXIS			  Near	 _TEXT:0000
+RAND				  Near	 _TEXT:003D
+SET_CURSOR			  Near	 _TEXT:0031
+SPHERE				  Byte	 DGROUP:0000
+SPHERE_ATTR			  Byte	 DGROUP:0002
+START				  Near	 _TEXT:0051
+TRUE				  Number 00FF
+UPDATE				  Near	 _TEXT:008F
+X1				  Byte	 DGROUP:0016
+X2				  Byte	 DGROUP:001A
+XPLOSION			  Byte	 DGROUP:0003
+Turbo Assembler	 Version 3.1	    11/03/18 01:04:59	    Page 8
+Symbol Table
+
+
+
+XPLOSION_ATTR			  Byte	 DGROUP:000B
+Y1				  Byte	 DGROUP:0017
+Y2				  Byte	 DGROUP:001B
+
+Groups & Segments		  Bit Size Align  Combine Class
+
+DGROUP				  Group
+  STACK				  16  0200 Para	  Stack	  STACK
+  _DATA				  16  001E Word	  Public  DATA
+_TEXT				  16  01B9 Word	  Public  CODE
+
