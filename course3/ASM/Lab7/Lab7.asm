@@ -1,6 +1,5 @@
-.model  small
-.stack  200h
-.386
+.model small
+.stack 200h
 
 .data
 
