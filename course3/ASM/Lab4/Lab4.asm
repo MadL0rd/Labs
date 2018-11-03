@@ -163,7 +163,7 @@ update:
     ; никакая клавиша не нажата (zf=1)
     jz  clear        
     ; пробел
-    cmp al, 20h 
+    cmp al, 20h
     je hold       
     ; Esc
     cmp al, 1bh
@@ -174,6 +174,8 @@ update:
 hold:
     mov ah, 0
     int 16h  
+    xor dirx1, TRUE
+    xor dirx2, TRUE
 
 ; стираем предыдущую позицию шаров
 clear:

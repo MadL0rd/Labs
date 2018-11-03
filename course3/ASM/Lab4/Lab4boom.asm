@@ -151,6 +151,8 @@ update:
 hold:
     mov ah, 0
     int 16h  
+    xor dirx1, TRUE
+    xor dirx2, TRUE
 
 ; стираем предыдущую позицию шаров
 clear:
