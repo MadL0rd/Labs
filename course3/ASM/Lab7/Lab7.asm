@@ -3,295 +3,78 @@
 .386
 
 .data
+
+; НОТЫ
+; октава 1
+ef1 equ 3091
+gs1 equ 2454
+af1 equ 2316
+bf1 equ 2063
+; октава 2
+cs2 equ 1838
+ef2 equ 1546
+gs2 equ 1227
+bf2 equ 1032
+; октава 3
+cf3 equ 974
+cs3 equ 919
+ef3 equ 773
+fs3 equ 689
+gs3 equ 613
+af3 equ 579
+bf3 equ 516
+; октава 4
+cs4 equ 459
+ef4 equ 386
+
+; ПЕСНЯ
+; мелодия
+seq dw ef1, 3, bf1, 3, ef2, 3, af3, 6, ef2, 3, gs3, 3, ef2, 3
+    dw gs1, 3, gs2, 3, cf3, 3, gs3, 6, gs2, 3, fs3, 3, gs2, 3
+    dw cs2, 3, cs3, 3, ef3, 3, cs4, 6, cs3, 3, bf3, 3, cs3, 3
+    dw af1, 3, cs3, 3, ef3, 3, bf3, 6, af1, 3, af3, 3, af1, 3
+    dw ef2, 3, bf2, 3, ef3, 3, af3, 3, gs3, 3, ef3, 3, bf2, 3, ef2, 3
+    dw gs1, 3, gs2, 3, cf3, 3, gs3, 6, gs2, 3, fs3, 3, gs2, 3
+    dw cs2, 3, cs3, 3, ef3, 3, cs4, 6, cs3, 3, bf3, 3, cs3, 3
+    dw af1, 3, cs3, 3, ef3, 3, bf3, 6, af1, 3, af3, 3, af1, 6
+    dw ef4, 6, 0, 6, ef1, 18
+    dw 0, 0
+; название песни
 song_title db 'Now Playing: Bo Burnham - Art Is Dead$'
 
 .code
 
-; включение спикера
-on proc
+; включает звук
+turn_sound_on proc
     mov al, 00000011b
     out 61h, al
     ret
-on endp
+turn_sound_on endp
 
-; выключение спикера
-off proc
+; выключает звук
+turn_sound_off proc
     mov al, 00000000b
     out 61h, al
     ret
-off endp
+turn_sound_off endp
 
-; вывод ноты
-ln proc
+; загружает ноту
+play_note proc
     out 42h, al
     mov al, ah
     out 42h, al
     ret
-ln endp
+play_note endp
 
-
-; ОКТАВЫ
-
-; октава 1
-ef1 proc
-    mov ax, 3091
-    call ln
-    ret
-ef1 endp
-
-gs1 proc
-    mov ax, 2454
-    call ln
-    ret
-gs1 endp
-
-af1 proc
-    mov ax, 2316
-    call ln
-    ret
-af1 endp
-
-bf1 proc
-    mov ax, 2063
-    call ln
-    ret
-bf1 endp
-
-; октава 2
-cs2 proc
-    mov ax, 1838
-    call ln
-    ret
-cs2 endp
-
-ef2 proc
-    mov ax, 1546
-    call ln
-    ret
-ef2 endp
-
-gs2 proc
-    mov ax, 1227
-    call ln
-    ret
-gs2 endp
-
-bf2 proc
-    mov ax, 1032
-    call ln
-    ret
-bf2 endp
-
-; октава 3
-cf3 proc
-    mov ax, 974
-    call ln
-    ret
-cf3 endp
-
-cs3 proc
-    mov ax, 919
-    call ln
-    ret
-cs3 endp
-
-ef3 proc
-    mov ax, 773
-    call ln
-    ret
-ef3 endp
-
-fs3 proc
-    mov ax, 689
-    call ln
-    ret
-fs3 endp
-
-gs3 proc
-    mov ax, 613
-    call ln
-    ret
-gs3 endp
-
-af3 proc
-    mov ax, 579
-    call ln
-    ret
-af3 endp
-
-bf3 proc
-    mov ax, 516
-    call ln
-    ret
-bf3 endp
-
-; октава 4
-cs4 proc
-    mov ax, 459
-    call ln
-    ret
-cs4 endp
-
-ef4 proc
-    mov ax, 386
-    call ln
-    ret
-ef4 endp
-
-
-; ПАУЗЫ
-n2 proc
-    mov cx, 2
-    call n
-    ret
-n2 endp
-
-n3 proc
-    mov cx, 3
-    call n
-    ret
-n3 endp
-
-n4 proc
-    mov cx, 4
-    call n
-    ret
-n4 endp
-
-n6 proc
-    mov cx, 6
-    call n
-    ret
-n6 endp
-
-n18 proc
-    mov cx, 18
-    call n
-    ret
-n18 endp
-
-n proc
+; задержка
+timeout proc
     mov ah, 86h
     mov dx, 0
     int 15h
     ret
-n endp
-
-; ТАКТЫ
-
-; такт 1
-t1 proc
-    call ef1
-    call n3
-    call bf1
-    call n3
-    call ef2
-    call n3
-    call af3
-    call n6
-    call ef2
-    call n3
-    call gs3
-    call n3
-    call ef2
-    call n3
-    ret
-t1 endp
-
-; такт 1 вариация
-t1v proc
-    call ef2
-    call n3
-    call bf2
-    call n3
-    call ef3
-    call n3
-    call af3
-    call n3
-    call gs3
-    call n3
-    call ef3
-    call n3
-    call bf2
-    call n3
-    call ef2
-    call n3
-    ret
-t1v endp
-
-; такт 2
-t2 proc
-    call gs1
-    call n3
-    call gs2
-    call n3
-    call cf3
-    call n3
-    call gs3
-    call n6
-    call gs2
-    call n3
-    call fs3
-    call n3
-    call gs2
-    call n3
-    ret
-t2 endp
-
-; такт 3
-t3 proc
-    call cs2
-    call n3
-    call cs3
-    call n3
-    call ef3
-    call n3
-    call cs4
-    call n6
-    call cs3
-    call n3
-    call bf3
-    call n3
-    call cs3
-    call n3
-    ret
-t3 endp
-
-; такт 4
-t4 proc
-    call af1
-    call n3
-    call cs3
-    call n3
-    call ef3
-    call n3
-    call bf3
-    call n6
-    call af1
-    call n3
-    call af3
-    call n3
-    call af1
-    call n3
-    ret
-t4 endp
-
-; окончание
-fin proc
-    call af1
-    call n3
-    call ef4
-    call n6
-    call off
-    call n6
-    call on
-    call ef1
-    call n18
-    ret
-fin endp
+timeout endp
 
 main:
-
     ; адрес сегмента данных
     mov ax, @data
     mov ds, ax
@@ -301,25 +84,52 @@ main:
     mov ah, 9
     int 21h
 
-    ; настройка канала
+    ; настраиваем канал
     mov al, 0b6h
     out 43h, al 
 
-    call on
+    ; адрес массива с нотами и задержками
+    mov bx, offset seq
 
-    call t1
-    call t2
-    call t3
-    call t4
+    ; включаем звук
+    call turn_sound_on
 
-    call t1v
-    call t2
-    call t3
-    call t4
+; играем текущую ноту
+play:
+    mov ax, [bx]     ; частота ноты
+    mov cx, [bx + 2] ; длительность задержки
     
-    call fin
+    ; если частота 0, то не играем ничего
+    cmp ax, 0
+    je quite
+    
+    ; загружаем ноту и ставим задержку
+    call play_note
+    call timeout
 
-    call off
+    jmp shift
+
+; не играем ничего
+quite:
+    ; если и задержка 0, то это конец мелодии
+    cmp cx, 0
+    je exit
+
+    ; выключаем звук на заданное в cx время
+    call turn_sound_off
+    call timeout
+    call turn_sound_on
+
+    jmp shift
+
+; сдвигаем bx на следующую ноту
+shift:
+    add bx, 4
+    jmp play
+
+exit:
+    ; выключаем звук
+    call turn_sound_off
 
     ; выход
     mov ah, 4ch
