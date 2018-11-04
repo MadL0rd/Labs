@@ -40,7 +40,8 @@ arg input:word
 
         ; если все число равно нулю, то выводим ноль
         cmp bx, 1
-    jne _pd_continue
+        jne _pd_continue
+    jmp _pd_print
 
     _pd_print:
         ; выводим цифру в al
