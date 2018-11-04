@@ -75,8 +75,9 @@ set_cursor endp
 
 ; выводим шар
 draw_sphere proc
-    mov ah, 9  ; функция
-    int 21h    ; выводим все до доллара
+    mov dl, '0'
+    mov ah, 02h
+    int 21h
     ret  
 draw_sphere endp
 
@@ -140,14 +141,12 @@ update:
     mov dl, x1
     mov dh, y1
     call set_cursor
-    mov dx, offset sphere  ; в dx адрес первой буквы надписи
     call draw_sphere
 
     ; выводим круг 2
     mov dl, x2 
     mov dh, y2
     call set_cursor
-    mov dx, offset sphere
     call draw_sphere
 
     ; задержка
@@ -253,7 +252,8 @@ collide:
     mov dh, y1
     call set_cursor
     mov dx, offset xplosion
-    call draw_sphere
+    mov ah, 9
+    int 21h    ; выводим все до доллара
 
     ; задержка при столкновении
     mov ah, 86h
