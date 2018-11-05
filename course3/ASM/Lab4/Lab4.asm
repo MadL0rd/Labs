@@ -6,7 +6,6 @@
 TRUE equ 255
 FALSE equ 0
 
-sphere  db '0$'
 sphere_attr db 79h
 
 xplosion db '* BOOM!$'

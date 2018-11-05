@@ -121,7 +121,7 @@ main:
 
     ; считываем корневой каталог в буфер
     mov dx, 19
-    mov cx ,15
+    mov cx, 15
     mov bx, offset buff
     mov al, 0
     int 25h
