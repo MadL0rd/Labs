@@ -5,38 +5,38 @@
 
 ; НОТЫ
 ; октава 1
-ef1 equ 3091
+en1 equ 3091
 gs1 equ 2454
-af1 equ 2316
-bf1 equ 2063
+an1 equ 2316
+bn1 equ 2063
 ; октава 2
 cs2 equ 1838
-ef2 equ 1546
+en2 equ 1546
 gs2 equ 1227
-bf2 equ 1032
+bn2 equ 1032
 ; октава 3
-cf3 equ 974
+cn3 equ 974
 cs3 equ 919
-ef3 equ 773
+en3 equ 773
 fs3 equ 689
 gs3 equ 613
-af3 equ 579
-bf3 equ 516
+an3 equ 579
+bn3 equ 516
 ; октава 4
 cs4 equ 459
-ef4 equ 386
+en4 equ 386
 
 ; ПЕСНЯ
 ; мелодия
-seq dw ef1, 3, bf1, 3, ef2, 3, af3, 6, ef2, 3, gs3, 3, ef2, 3
-    dw gs1, 3, gs2, 3, cf3, 3, gs3, 6, gs2, 3, fs3, 3, gs2, 3
-    dw cs2, 3, cs3, 3, ef3, 3, cs4, 6, cs3, 3, bf3, 3, cs3, 3
-    dw af1, 3, cs3, 3, ef3, 3, bf3, 6, af1, 3, af3, 3, af1, 3
-    dw ef2, 3, bf2, 3, ef3, 3, af3, 3, gs3, 3, ef3, 3, bf2, 3, ef2, 3
-    dw gs1, 3, gs2, 3, cf3, 3, gs3, 6, gs2, 3, fs3, 3, gs2, 3
-    dw cs2, 3, cs3, 3, ef3, 3, cs4, 6, cs3, 3, bf3, 3, cs3, 3
-    dw af1, 3, cs3, 3, ef3, 3, bf3, 6, af1, 3, af3, 3, af1, 6
-    dw ef4, 6, 0, 6, ef1, 18
+seq dw en1, 3, bn1, 3, en2, 3, an3, 6, en2, 3, gs3, 3, en2, 3
+    dw gs1, 3, gs2, 3, cn3, 3, gs3, 6, gs2, 3, fs3, 3, gs2, 3
+    dw cs2, 3, cs3, 3, en3, 3, cs4, 6, cs3, 3, bn3, 3, cs3, 3
+    dw an1, 3, cs3, 3, en3, 3, bn3, 6, an1, 3, an3, 3, an1, 3
+    dw en2, 3, bn2, 3, en3, 3, an3, 3, gs3, 3, en3, 3, bn2, 3, en2, 3
+    dw gs1, 3, gs2, 3, cn3, 3, gs3, 6, gs2, 3, fs3, 3, gs2, 3
+    dw cs2, 3, cs3, 3, en3, 3, cs4, 6, cs3, 3, bn3, 3, cs3, 3
+    dw an1, 3, cs3, 3, en3, 3, bn3, 6, an1, 3, an3, 3, an1, 6
+    dw en4, 6, 0, 6, en1, 18
     dw 0, 0
 ; название песни
 song_title db 'Now Playing: Bo Burnham - Art Is Dead$'
